@@ -2,8 +2,7 @@ from random import random
 
 from Saper import *
 from raceInWald import Race
-from Dash import Dash
-from tanchik import Tanchik
+from Gleid import *
 from Survival import *
 
 
@@ -24,7 +23,7 @@ class Menu:
 
     def play_scene(self):
         self.buttons = [(10, 500, 'Назад'),
-        #                (50, 50, 'Dash'),
+                        (50, 50, 'Gleid'),
                         (300, 50, 'Minesweeper'),
         #                (550, 50, 'Race in Wald'),
                         (50, 200, 'Zombie Survival')]
@@ -47,9 +46,13 @@ class Menu:
     def scene_raceInWald(self):
         self.scene = 'race_in_wald'
 
-    def dash(self):
-        pass
-        self.play_scene()
+    def gleid(self):
+        gleid_start()
+        x, y = 800, 600
+        size = (x, y)
+        pg.display.set_mode(size)
+        pg.display.set_caption('Меню')
+        pg.display.flip()
 
     def race(self):
         pass
@@ -108,8 +111,8 @@ class Menu:
                     elif 'Race in Wald' in button[2]:
                         self.scene_raceInWald()
                         self.race()
-                    elif 'Dash' in button[2]:
-                        self.dash()
+                    elif 'Gleid' in button[2]:
+                        self.gleid()
                     elif 'Zombie Survival' in button[2]:
                         self.zombie_game()
 
