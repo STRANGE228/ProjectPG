@@ -75,7 +75,7 @@ class Player(pg.sprite.Sprite):
 
 
 class Ground(pg.sprite.Sprite):
-    image = pg.image.load(os.path.join('data', 'brick.png'))  # ground1. For cheak
+    image = pg.image.load(os.path.join('data', 'brick.png'))  # ground1. For check
 
     def __init__(self):
         super().__init__(ground_sprite)

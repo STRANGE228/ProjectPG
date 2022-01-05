@@ -70,7 +70,7 @@ class Player(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = (x // 2) * 30
         self.rect.y = (y - 3) * 30
-        self.speed = 3
+        self.speed = 1
         self.last_d = 1
         self.live = True
         self.reload = 10
@@ -274,7 +274,7 @@ def zombie_start():
     wins = 0
     rec_zap = False
     running = True
-    pg.key.set_repeat(200, 60)
+    pg.key.set_repeat(200, 20)
 
     while running:
         for event in pg.event.get():
