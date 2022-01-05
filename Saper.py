@@ -63,7 +63,7 @@ class Minesweeper(Board):
                                                            self.cell_size - 2, self.cell_size - 2))
                 elif self.board[col][row] != -1:
                     text = f.render(f'{self.board[col][row]}', True,
-                                      (0, 255, 0))
+                                    (0, 255, 0))
                     screen.blit(text, (self.left + col * self.cell_size + 1,
                                        self.top + row * self.cell_size + 1))
         for pos in self.flags:
@@ -74,7 +74,7 @@ class Minesweeper(Board):
 
         f = pg.font.Font(None, 25)
         text_open = f.render(f'Открыто {self.count}/{self.width * self.height - self.bombs}', True,
-                        (0, 240, 240))
+                             (0, 240, 240))
         screen.blit(text_open, (self.left // 2, 10))
 
         text_time = f.render(f'Время: {self.time // 60}:{self.time % 60}', True,
@@ -99,7 +99,7 @@ class Minesweeper(Board):
             for dx in range(-1, 2):
                 for dy in range(-1, 2):
                     if 0 <= (cell[0] + dx) < self.width and 0 <= (cell[1] + dy) < self.height:
-                        if (dx == 0 and dy == 0):
+                        if dx == 0 and dy == 0:
                             continue
                         if self.board[cell[0] + dx][cell[1] + dy] == -10:
                             summa += 1
@@ -108,7 +108,7 @@ class Minesweeper(Board):
                 for dx in range(-1, 2):
                     for dy in range(-1, 2):
                         if 0 <= (cell[0] + dx) < self.width and 0 <= (cell[1] + dy) < self.height:
-                            if (dx == 0 and dy == 0):
+                            if dx == 0 and dy == 0:
                                 continue
                             self.open_cell((cell[0] + dx, cell[1] + dy))
             if self.count == self.width * self.height - self.bombs:
@@ -143,7 +143,6 @@ class Minesweeper(Board):
             elif self.board[cell[0]][cell[1]] == -10:
                 self.end = True
                 self.status_end = 'lose'
-
 
     def get_flag(self, mouse_pos):
         cell = self.get_cell(mouse_pos)
@@ -184,7 +183,7 @@ def saper_start(x, y, bombs):
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 running = False
-            if not(board.end):
+            if not board.end:
                 if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
                     board.get_click(event.pos)
                 if event.type == pg.MOUSEBUTTONDOWN and event.button == 3:

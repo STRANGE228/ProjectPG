@@ -1,6 +1,6 @@
 import os
 import sqlite3
-from random import random, randint
+from random import randint
 
 import pygame as pg
 
@@ -15,6 +15,7 @@ num = 1
 
 class Player(pg.sprite.Sprite):
     image = pg.image.load(os.path.join('data', 'player_gleid.png'))
+
     def __init__(self):
         super().__init__(player_sprite)
         self.image = Player.image
@@ -27,12 +28,11 @@ class Player(pg.sprite.Sprite):
         self.score = 0
         self.live = True
 
-
     def update(self):
         self.score += 0.1
-        if not(self.inJump):
+        if not self.inJump:
             if pg.sprite.spritecollideany(self, ground_sprite) is None:
-                if not(pg.sprite.spritecollideany(self, sprites_1) or pg.sprite.spritecollideany(self, sprites_2)):
+                if not (pg.sprite.spritecollideany(self, sprites_1) or pg.sprite.spritecollideany(self, sprites_2)):
                     self.rect.y += 4
                     if obstacle := (pg.sprite.spritecollideany(self, sprites_1) or
                                     pg.sprite.spritecollideany(self, sprites_2)):
@@ -70,12 +70,13 @@ class Player(pg.sprite.Sprite):
 
     def dead(self, t):
         if t < 50:
-            if 35 > t > 5 :
+            if 35 > t > 5:
                 self.image = pg.image.load(os.path.join('data', f'player_gleid_dead{t // 5}.png'))
 
 
 class Ground(pg.sprite.Sprite):
-    image = pg.image.load(os.path.join('data', 'ground1.png'))
+    image = pg.image.load(os.path.join('data', 'brick.png'))  # ground1. For cheak
+
     def __init__(self):
         super().__init__(ground_sprite)
         self.image = Ground.image
@@ -87,6 +88,7 @@ class Ground(pg.sprite.Sprite):
 class Obstacle(pg.sprite.Sprite):
     image_block = pg.image.load(os.path.join('data', 'brick.png'))
     image_spike = pg.image.load(os.path.join('data', 'spike.png'))
+
     def __init__(self, n, x, y, typ):
         if n == 1:
             super(Obstacle, self).__init__(sprites_1)
@@ -127,7 +129,7 @@ class Check(pg.sprite.Sprite):
     def update(self):
         self.rect.x = self.p.rect.x + 3
         self.rect.y = self.p.rect.y + 1
-        if  pg.sprite.spritecollideany(self, sprites_1) or pg.sprite.spritecollideany(self, sprites_2):
+        if pg.sprite.spritecollideany(self, sprites_1) or pg.sprite.spritecollideany(self, sprites_2):
             self.p.live = False
 
 

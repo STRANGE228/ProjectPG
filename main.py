@@ -1,7 +1,7 @@
 from random import random
 
 from Saper import *
-from raceInWald import Race
+# from raceInWald import Race
 from Gleid import *
 from Survival import *
 
@@ -13,6 +13,9 @@ class Menu:
         self.scene = None
         self.rendering = True
         self.main_scene()
+        self.x = 800
+        self.y = 600
+        self.size = self.x, self.y
 
     def main_scene(self):
         self.buttons = [(300, 100, '        Играть'),
@@ -25,7 +28,7 @@ class Menu:
         self.buttons = [(10, 500, 'Назад'),
                         (50, 50, 'Gleid'),
                         (300, 50, 'Minesweeper'),
-        #                (550, 50, 'Race in Wald'),
+                        (550, 50, 'Race in Wald'),
                         (50, 200, 'Zombie Survival')]
         self.buttons_size = (200, 100)
         self.scene = 'play'
@@ -48,35 +51,29 @@ class Menu:
 
     def gleid(self):
         gleid_start()
-        x, y = 800, 600
-        size = (x, y)
-        pg.display.set_mode(size)
-        pg.display.set_caption('Меню')
-        pg.display.flip()
+        self.fix_screen()
 
     def race(self):
         pass
         self.play_scene()
+        self.fix_screen()
 
     def minesweeper(self, x, y, bombs):
         saper_start(x, y, bombs)
-        x, y = 800, 600
-        size = (x, y)
-        pg.display.set_mode(size)
-        pg.display.set_caption('Меню')
-        pg.display.flip()
+        self.fix_screen()
 
     def zombie_game(self):
         zombie_start()
-        x, y = 800, 600
-        size = (x, y)
-        pg.display.set_mode(size)
-        pg.display.set_caption('Меню')
-        pg.display.flip()
+        self.fix_screen()
 
     def exit_scene(self):
         pg.quit()
         exit(0)
+
+    def fix_screen(self):
+        pg.display.set_mode(self.size)
+        pg.display.set_caption('Меню')
+        pg.display.flip()
 
 
 
@@ -93,6 +90,8 @@ class Menu:
         for button in self.buttons:
             if ((button[0] <= mouse_pos[0] < button[0] + self.buttons_size[0]) and
                     (button[1] <= mouse_pos[1] < button[1] + self.buttons_size[1])):
+                if 'Назад' in button[2]:
+                    self.main_scene()
                 if self.scene == 'main':
                     if 'Играть' in button[2]:
                         self.play_scene()
@@ -101,12 +100,9 @@ class Menu:
                     elif 'Выход' in button[2]:
                         self.exit_scene()
                 elif self.scene == 'record':
-                    if 'Назад' in button[2]:
-                        self.main_scene()
+                    pass
                 elif self.scene == 'play':
-                    if 'Назад' in button[2]:
-                        self.main_scene()
-                    elif 'Minesweeper' in button[2]:
+                    if 'Minesweeper' in button[2]:
                         self.scene_begin_minesweeper()
                     elif 'Race in Wald' in button[2]:
                         self.scene_raceInWald()
@@ -130,20 +126,15 @@ class Menu:
                         x = 30
                         y = 16
                         bombs = 99
-                    elif 'Назад' in button[2]:
-                        self.play_scene()
-                        return
                     self.minesweeper(x, y, bombs)
 
 
 def main():
     pg.init()
-    x, y = 800, 600
-    size = (x, y)
-    screen = pg.display.set_mode(size)
+    menu = Menu()
+    screen = pg.display.set_mode(menu.size)
     clock = pg.time.Clock()
     pg.display.set_caption('Меню')
-    menu = Menu()
 
     running = True
 
