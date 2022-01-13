@@ -84,7 +84,7 @@ class Menu:
 
 
     def render(self, screen):
-        if self.scene == 'main' or self.scene == 'record' or self.scene == 'play':
+        if self.scene == 'main' or self.scene == 'record' or self.scene == 'play' or self.scene == 'begin_minesweeper':
             screen.blit(self.first_screen, (0, 0))
         for button in self.buttons:
             pg.draw.rect(screen, (0, 200, 0), (button[0], button[1], self.buttons_size[0], self.buttons_size[1]))
