@@ -1,21 +1,23 @@
 from random import random
 
 from Saper import *
-# from raceInWald import Race
 from Gleid import *
 from Survival import *
-
+from FallGame import *
 
 import pygame as pg
 
+
 class Menu:
-    def __init__(self):
+    def __init__(self, screen):
+        self.screen = screen
         self.scene = None
         self.rendering = True
         self.main_scene()
         self.x = 800
         self.y = 600
         self.size = self.x, self.y
+        self.first_screen = pg.image.load(os.path.join('data', 'first_menu.jpg'))
 
     def main_scene(self):
         self.buttons = [(300, 100, '        Играть'),
@@ -28,8 +30,9 @@ class Menu:
         self.buttons = [(10, 500, 'Назад'),
                         (50, 50, 'Gleid'),
                         (300, 50, 'Minesweeper'),
-                        (550, 50, 'Race in Wald'),
-                        (50, 200, 'Zombie Survival')]
+                        #(550, 50, 'Race in Wald'),
+                        (50, 200, 'Zombie Survival'),
+                        (300, 200, 'Spirt Fall')]
         self.buttons_size = (200, 100)
         self.scene = 'play'
 
@@ -66,6 +69,10 @@ class Menu:
         zombie_start()
         self.fix_screen()
 
+    def fall_game(self):
+        fall_start()
+        self.fix_screen()
+
     def exit_scene(self):
         pg.quit()
         exit(0)
@@ -76,15 +83,30 @@ class Menu:
         pg.display.flip()
 
 
-
-
     def render(self, screen):
+        if self.scene == 'main' or self.scene == 'record' or self.scene == 'play':
+            screen.blit(self.first_screen, (0, 0))
         for button in self.buttons:
             pg.draw.rect(screen, (0, 200, 0), (button[0], button[1], self.buttons_size[0], self.buttons_size[1]))
             f = pg.font.Font(None, 36)
             text = f.render(f'{button[2]}', True,
                             (0, 0, 200))
             screen.blit(text, (button[0], button[1]))
+        if self.scene == 'record':
+            db = sqlite3.connect('records.db')
+            cur = db.cursor()
+            sql1 = f"""select * from record"""
+            recs = cur.execute(sql1).fetchall()
+            h = 20
+            for rec in recs:
+                f = pg.font.Font(None, 60)
+                text = f.render(f'{rec[0]}', True,
+                                (200, 0, 0))
+                self.screen.blit(text, (140, h))
+                text = f.render(f'{rec[1]}', True,
+                                (200, 0, 0))
+                self.screen.blit(text, (540, h))
+                h += 80
 
     def click(self, mouse_pos):
         for button in self.buttons:
@@ -100,7 +122,8 @@ class Menu:
                     elif 'Выход' in button[2]:
                         self.exit_scene()
                 elif self.scene == 'record':
-                    pass
+                    if 'Назад' in button[2]:
+                        self.main_scene()
                 elif self.scene == 'play':
                     if 'Minesweeper' in button[2]:
                         self.scene_begin_minesweeper()
@@ -111,6 +134,8 @@ class Menu:
                         self.gleid()
                     elif 'Zombie Survival' in button[2]:
                         self.zombie_game()
+                    elif 'Spirt Fall' in button[2]:
+                        self.fall_game()
 
                 elif self.scene == 'begin_minesweeper':
                     x, y, bombs = 0, 0, 0
@@ -131,8 +156,10 @@ class Menu:
 
 def main():
     pg.init()
-    menu = Menu()
-    screen = pg.display.set_mode(menu.size)
+    size = (800, 600)
+    screen = pg.display.set_mode(size)
+    menu = Menu(screen)
+
     clock = pg.time.Clock()
     pg.display.set_caption('Меню')
 
@@ -145,7 +172,7 @@ def main():
             if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
                 menu.click(event.pos)
 
-        screen.fill((200, 0, 200))
+        #screen.fill((200, 0, 200))
         menu.render(screen)
         pg.display.flip()
         clock.tick(50)
@@ -154,3 +181,6 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+
