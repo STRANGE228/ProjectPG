@@ -8,10 +8,17 @@ from FallGame import *
 import pygame as pg
 
 
+def exit_scene():
+    pg.quit()
+    exit(0)
+
+
 class Menu:
     def __init__(self, screen):
         self.screen = screen
         self.scene = None
+        self.buttons = None
+        self.buttons_size = (200, 60)
         self.rendering = True
         self.main_scene()
         self.x = 800
@@ -30,7 +37,6 @@ class Menu:
         self.buttons = [(10, 500, 'Назад'),
                         (50, 50, 'Gleid'),
                         (300, 50, 'Minesweeper'),
-                        #(550, 50, 'Race in Wald'),
                         (50, 200, 'Zombie Survival'),
                         (300, 200, 'Spirt Fall')]
         self.buttons_size = (200, 100)
@@ -73,15 +79,10 @@ class Menu:
         fall_start()
         self.fix_screen()
 
-    def exit_scene(self):
-        pg.quit()
-        exit(0)
-
     def fix_screen(self):
         pg.display.set_mode(self.size)
         pg.display.set_caption('Меню')
         pg.display.flip()
-
 
     def render(self, screen):
         if self.scene == 'main' or self.scene == 'record' or self.scene == 'play' or self.scene == 'begin_minesweeper':
@@ -120,7 +121,7 @@ class Menu:
                     elif 'Рекорды' in button[2]:
                         self.record_scene()
                     elif 'Выход' in button[2]:
-                        self.exit_scene()
+                        exit_scene()
                 elif self.scene == 'record':
                     if 'Назад' in button[2]:
                         self.main_scene()
@@ -172,7 +173,6 @@ def main():
             if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
                 menu.click(event.pos)
 
-        #screen.fill((200, 0, 200))
         menu.render(screen)
         pg.display.flip()
         clock.tick(50)
@@ -181,6 +181,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-

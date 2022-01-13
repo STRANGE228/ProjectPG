@@ -49,6 +49,12 @@ class Minesweeper(Board):
         self.bombs = bombs
         self.timer = pg.USEREVENT + 1
         pg.time.set_timer(self.timer, 1000)
+        self.end = False
+        self.status_end = None
+        self.first_step = None
+        self.flags = None
+        self.count = None
+        self.time = None
         self.new_game(screen)
 
     def render(self, screen):
@@ -126,7 +132,8 @@ class Minesweeper(Board):
                 t = cur.execute(sql1).fetchone()[0]
                 if (self.time // 60 < int(t.split(':')[0])) or (self.time // 60 == int(t.split(':')[0]) and
                                                                 self.time % 60 < int(t.split(':')[1])):
-                    sql = f"""update record set rec = '{self.time // 60}:{self.time % 60}' where Game like '%Saper_{mode}%'"""
+                    sql = f"""update record set rec = '{self.time // 60}:{self.time % 60}' 
+                    where Game like '%Saper_{mode}%'"""
                     cur.execute(sql)
                 db.commit()
 

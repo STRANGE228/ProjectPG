@@ -1,6 +1,6 @@
 import os
 import sqlite3
-from random import random, randint
+from random import randint
 from math import atan2, cos, sin, degrees
 
 import pygame as pg
@@ -25,6 +25,7 @@ def zap_record(score):
 
 class PlayerFall(pg.sprite.Sprite):
     image = pg.image.load(os.path.join('data', 'spirte2.png'))
+
     def __init__(self):
         super().__init__(player_sprite)
         self.image = PlayerFall.image
@@ -60,6 +61,7 @@ class PlayerFall(pg.sprite.Sprite):
         if pg.sprite.spritecollideany(self, enemy_sprite):
             self.live = False
 
+
 class GunFall(pg.sprite.Sprite):
     image = pg.image.load(os.path.join('data', 'spirte1.png'))
 
@@ -77,8 +79,10 @@ class GunFall(pg.sprite.Sprite):
         self.rect.x = self.pl.rect.x + self.image.get_width() * cos(self.angle) // 2
         self.rect.y = self.pl.rect.y + 25 + self.image.get_height() * sin(self.angle) // 2
 
+
 class BulletFall(pg.sprite.Sprite):
     image = pg.image.load(os.path.join('data', 'spirte0.png'))
+
     def __init__(self, x, y, dx, dy, angle):
         super().__init__(bullet_sprite)
         self.image = pg.transform.rotate(BulletFall.image, -degrees(angle) - 90)
@@ -95,8 +99,10 @@ class BulletFall(pg.sprite.Sprite):
         if not(-self.image.get_height() <= self.rect.y < 600 + self.image.get_height()):
             self.kill()
 
+
 class EnemyFall(pg.sprite.Sprite):
     image = pg.image.load(os.path.join('data', 'Fantaser0.png'))
+
     def __init__(self, x, y):
         super().__init__(enemy_sprite)
         self.image = EnemyFall.image
@@ -109,8 +115,10 @@ class EnemyFall(pg.sprite.Sprite):
             self.kill()
         self.rect.y += 5
 
+
 class SpawnBullet(pg.sprite.Sprite):
     image = pg.image.load(os.path.join('data', 'spirte0.png'))
+
     def __init__(self, x, y):
         super().__init__(spawn_bul)
         self.image = SpawnBullet.image
@@ -119,14 +127,13 @@ class SpawnBullet(pg.sprite.Sprite):
         self.rect.y = y
 
 
-
-
 def fall_start():
     screen = pg.display.set_mode((800, 600))
     clock = pg.time.Clock()
     running = True
     arrow = pg.image.load(os.path.join('data', 'arrow.png'))
     player, gun = None, None
+
     def new_game():
         nonlocal player, gun
         player_sprite.empty()
@@ -165,12 +172,10 @@ def fall_start():
             if len(enemy_sprite) < randint(1, 3):
                 EnemyFall(randint(1, 799), -EnemyFall.image.get_height() - randint(10, 400))
         f = pg.font.Font(None, 60)
-        text_bul = f.render(f'{round(player.bullets, 2)}', True,
-                             (0, 240, 240))
+        text_bul = f.render(f'{round(player.bullets, 2)}', True, (0, 240, 240))
         screen.blit(text_bul, (10, 10))
         f = pg.font.Font(None, 260)
-        text_score = f.render(f'{round(player.score, 2)}', True,
-                             (150, 150, 150))
+        text_score = f.render(f'{round(player.score, 2)}', True, (150, 150, 150))
         screen.blit(text_score, (380, 200))
         player_sprite.draw(screen)
         enemy_sprite.draw(screen)
@@ -182,7 +187,7 @@ def fall_start():
             bullet_sprite.update()
         if coord and pg.mouse.get_focused():
             screen.blit(arrow, (coord[0] - arrow.get_width() // 2, coord[1] - arrow.get_height() // 2))
-        if not(player.live):
+        if not player.live:
             if count < 20:
                 count += 1
             else:
@@ -196,9 +201,3 @@ def fall_start():
     bullet_sprite.empty()
     spawn_bul.empty()
     pg.mouse.set_visible(True)
-
-
-
-
-
-
