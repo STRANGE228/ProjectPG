@@ -1,3 +1,4 @@
+import os
 import sqlite3
 
 import pygame as pg
@@ -176,19 +177,32 @@ class Minesweeper(Board):
 
 
 def saper_start(x, y, bombs):
-    pg.init()
     x = x
     y = y
     size = (20 * 2 + x * 30, 60 + 10 * 2 + y * 30)
     screen = pg.display.set_mode(size)
     clock = pg.time.Clock()
     pg.display.set_caption('Сапер')
+
+    prev = True
+    screen.fill((0, 0, 0))
+    screen.blit(pg.image.load(os.path.join('prevs', 'saper_img.png')), (0, 0))
+    pg.display.flip()
+    while prev:
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                return
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_ESCAPE:
+                    return
+                else:
+                    prev = False
     board = Minesweeper(x, y, bombs, screen)
     running = True
 
     while running:
         for event in pg.event.get():
-            if event.type == pg.QUIT:
+            if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
                 running = False
             if not board.end:
                 if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:

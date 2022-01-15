@@ -1,5 +1,3 @@
-from random import random
-
 from Saper import *
 from Gleid import *
 from Survival import *
@@ -168,7 +166,7 @@ def main():
 
     while running:
         for event in pg.event.get():
-            if event.type == pg.QUIT:
+            if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
                 running = False
             if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
                 menu.click(event.pos)

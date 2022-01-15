@@ -4,7 +4,6 @@ from random import randint
 
 import pygame as pg
 
-pg.init()
 player_sprite = pg.sprite.Group()
 sprites_1 = pg.sprite.Group()
 sprites_2 = pg.sprite.Group()
@@ -23,7 +22,7 @@ class Player(pg.sprite.Sprite):
         self.rect.x = 120
         self.rect.y = 500
         self.inJump = False
-        self.jump = 20
+        self.jump = 30
         self.onGround = False
         self.score = 0
         self.live = True
@@ -108,7 +107,7 @@ class Obstacle(pg.sprite.Sprite):
         elif typ == 4:
             self.image = pg.transform.rotate(Obstacle.image_spike, 90)
             self.typ = 4
-        elif typ == 5:
+        else:
             self.image = pg.transform.rotate(Obstacle.image_spike, -90)
             self.typ = 5
         self.rect = self.image.get_rect()
@@ -162,8 +161,16 @@ def zap_rec(score):
     db.commit()
 
 
+def gleid_clear():
+    player_sprite.empty()
+    sprites_1.empty()
+    sprites_2.empty()
+    ground_sprite.empty()
+    check_sprite.empty()
+
+
 def gleid_start():
-    screen = pg.display.set_mode((800, 600))
+    screen = pg.display.set_mode((800, 600), pg.FULLSCREEN)
     clock = pg.time.Clock()
     running = True
     player = Player()
@@ -181,16 +188,39 @@ def gleid_start():
         count = 0
         check = Check(player)
 
+    gleid_prev = pg.image.load(os.path.join('prevs', 'gleid_img.png'))
+
+    def gleid_pause():
+        pause = True
+        screen.blit(gleid_prev, (0, 0))
+        pg.display.flip()
+        while pause:
+            for event_p in pg.event.get():
+                if event_p.type == pg.QUIT:
+                    return
+                if event_p.type == pg.KEYDOWN:
+                    if event_p.key == pg.K_ESCAPE:
+                        return True
+                    else:
+                        pause = False
+
+    if gleid_pause():
+        gleid_clear()
+        return
+
     t = 0
     count = 0
     while running:
         screen.fill((150, 0, 150))
         for event in pg.event.get():
-            if event.type == pg.QUIT:
+            if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
                 running = False
             if event.type == pg.MOUSEBUTTONDOWN or (event.type == pg.KEYDOWN and event.key == pg.K_SPACE):
                 if player.onGround:
                     player.inJump = True
+            if event.type == pg.KEYDOWN and event.key == pg.K_TAB:
+                if gleid_pause():
+                    running = False
         if count <= 0:
             create_obstacle()
             count = 800
@@ -219,9 +249,4 @@ def gleid_start():
         screen.blit(text_open, (10, 10))
         pg.display.flip()
         clock.tick(30)
-
-    player_sprite.empty()
-    sprites_1.empty()
-    sprites_2.empty()
-    ground_sprite.empty()
-    check_sprite.empty()
+    gleid_clear()

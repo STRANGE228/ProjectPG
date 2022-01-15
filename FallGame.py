@@ -5,7 +5,6 @@ from math import atan2, cos, sin, degrees
 
 import pygame as pg
 
-pg.init()
 player_sprite = pg.sprite.Group()
 enemy_sprite = pg.sprite.Group()
 bullet_sprite = pg.sprite.Group()
@@ -127,12 +126,40 @@ class SpawnBullet(pg.sprite.Sprite):
         self.rect.y = y
 
 
+def fallgame_clear():
+    player_sprite.empty()
+    enemy_sprite.empty()
+    bullet_sprite.empty()
+    spawn_bul.empty()
+    pg.mouse.set_visible(True)
+
+
 def fall_start():
-    screen = pg.display.set_mode((800, 600))
+    screen = pg.display.set_mode((800, 600), pg.FULLSCREEN)
     clock = pg.time.Clock()
     running = True
     arrow = pg.image.load(os.path.join('data', 'arrow.png'))
     player, gun = None, None
+
+    fallgame_prev = pg.image.load(os.path.join('prevs', 'spirte_fall_img.png'))
+
+    def fallgame_pause():
+        pause = True
+        screen.blit(fallgame_prev, (0, 0))
+        pg.display.flip()
+        while pause:
+            for event_p in pg.event.get():
+                if event_p.type == pg.QUIT:
+                    return
+                if event_p.type == pg.KEYDOWN:
+                    if event_p.key == pg.K_ESCAPE:
+                        return True
+                    else:
+                        pause = False
+
+    if fallgame_pause():
+        fallgame_clear()
+        return
 
     def new_game():
         nonlocal player, gun
@@ -149,7 +176,7 @@ def fall_start():
     while running:
         screen.fill((240, 250, 240))
         for event in pg.event.get():
-            if event.type == pg.QUIT:
+            if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
                 running = False
             if player.live:
                 if event.type == pg.MOUSEBUTTONDOWN:
@@ -165,12 +192,15 @@ def fall_start():
                 coord = event.pos
                 angle = atan2((event.pos[1] - gun.rect.y), (event.pos[0] - gun.rect.x))
                 gun.angle = angle
+            if event.type == pg.KEYDOWN and event.key == pg.K_TAB:
+                if fallgame_pause():
+                    running = False
         if player.live:
             if len(spawn_bul) < 2:
                 for _ in range(2 - len(spawn_bul)):
-                    SpawnBullet(randint(0, 800,), randint(0, 400))
-            if len(enemy_sprite) < randint(1, 3):
-                EnemyFall(randint(1, 799), -EnemyFall.image.get_height() - randint(10, 400))
+                    SpawnBullet(randint(0, 800,), randint(100, 400))
+            if len(enemy_sprite) < 3:
+                EnemyFall(randint(20, 779), -EnemyFall.image.get_height() - randint(10, 400))
         f = pg.font.Font(None, 60)
         text_bul = f.render(f'{round(player.bullets, 2)}', True, (0, 240, 240))
         screen.blit(text_bul, (10, 10))
@@ -196,8 +226,4 @@ def fall_start():
                 new_game()
         pg.display.flip()
         clock.tick(30)
-    player_sprite.empty()
-    enemy_sprite.empty()
-    bullet_sprite.empty()
-    spawn_bul.empty()
-    pg.mouse.set_visible(True)
+    fallgame_clear()

@@ -4,7 +4,6 @@ import sqlite3
 import pygame as pg
 from random import choices, choice, randrange
 
-pg.init()
 enemies = pg.sprite.Group()
 walls = pg.sprite.Group()
 player_soldier = pg.sprite.Group()
@@ -39,44 +38,58 @@ def create_map(x0, y0):
     return walls_map, coords
 
 
-def new_rec(score):
+def new_rec(score0):
     db = sqlite3.connect('records.db')
     cur = db.cursor()
     sql1 = f"""select rec from record where Game like '%Survival%'"""
     s = cur.execute(sql1).fetchone()[0]
-    if score > s:
-        sql = f"""update record set rec = {score} where Game like '%Survival%'"""
+    if score0 > s:
+        sql = f"""update record set rec = {score0} where Game like '%Survival%'"""
         cur.execute(sql)
     db.commit()
 
 
 class Wall(pg.sprite.Sprite):
-    image = pg.image.load(os.path.join('data', 'brick.png'))
+    image = pg.image.load(os.path.join('data', 'brick_z.png'))
 
     def __init__(self, x, y):
         super(Wall, self).__init__(walls)
         self.image = Wall.image
         self.rect = self.image.get_rect()
-        self.rect.x = x * 30
-        self.rect.y = y * 30
+        self.rect.x = x * 70
+        self.rect.y = y * 70
 
 
 class Player(pg.sprite.Sprite):
-    image = pg.image.load(os.path.join('data', 'soldier1.png'))
+    image0 = pg.image.load(os.path.join('data', 'soldier0.png'))
+    image1 = pg.image.load(os.path.join('data', 'soldier1.png'))
 
     def __init__(self, x, y):
         super(Player, self).__init__(player_soldier)
-        self.image = Player.image
+        self.image = Player.image0
         self.rect = self.image.get_rect()
-        self.rect.x = (x // 2) * 30
-        self.rect.y = (y - 3) * 30
-        self.speed = 1
+        self.rect.x = (x // 2) * 70
+        self.rect.y = (y - 3) * 70
+        self.speed = 4
         self.last_d = 1
         self.live = True
         self.reload = 10
+        self.count = 0
+        self.img = 1
 
     def move(self, d):
         if self.live:
+            self.count += 1
+            if self.count == 5:
+                if self.img == 1:
+                    self.image = Player.image1
+                    self.img = 2
+                else:
+                    self.image = Player.image0
+                    self.img = 1
+                self.povorot(self.last_d)
+                self.count = 0
+
             if d == 1:
                 self.rect.y -= self.speed
                 if pg.sprite.spritecollideany(self, walls):
@@ -93,34 +106,38 @@ class Player(pg.sprite.Sprite):
                 self.rect.x -= self.speed
                 if pg.sprite.spritecollideany(self, walls):
                     self.rect.x += self.speed
-            if pg.sprite.spritecollideany(self, enemies):
-                self.live = False
 
     def povorot(self, d):
         if self.live:
             self.last_d = d
+            if self.img == 1:
+                image = Player.image0
+            else:
+                image = Player.image1
             if d == 1:
-                self.image = Player.image
+                self.image = image
             if d == 3:
-                self.image = pg.transform.flip(Player.image, False, True)
+                self.image = pg.transform.flip(image, False, True)
             if d == 2:
-                self.image = pg.transform.rotate(Player.image, -90)
+                self.image = pg.transform.rotate(image, -90)
             if d == 4:
-                self.image = pg.transform.rotate(Player.image, 90)
+                self.image = pg.transform.rotate(image, 90)
 
     def update(self):
         self.reload += 1
+        if pg.sprite.spritecollideany(self, enemies):
+            self.live = False
 
 
 class Enemy(pg.sprite.Sprite):
-    image = pg.image.load(os.path.join('data', 'zombie1.png'))
+    image = pg.image.load(os.path.join('data', 'zombie0.png'))
 
     def __init__(self, x, y):
         super(Enemy, self).__init__(enemies)
         self.image = Enemy.image
         self.rect = self.image.get_rect()
-        self.rect.x = x * 30
-        self.rect.y = y * 30
+        self.rect.x = x * 70
+        self.rect.y = y * 70
         self.live = True
         self.d = 0
         self.count = 0
@@ -130,20 +147,20 @@ class Enemy(pg.sprite.Sprite):
             if self.count <= 0:
                 self.count = randrange(10, 100)
                 ds = []
-                self.rect.y -= 1
+                self.rect.y -= 2
                 if not (pg.sprite.spritecollideany(self, walls)):
                     ds.append(1)
-                self.rect.y += 3
+                self.rect.y += 5
                 if not (pg.sprite.spritecollideany(self, walls)):
                     ds.append(3)
-                self.rect.y -= 2
-                self.rect.x += 2
+                self.rect.y -= 3
+                self.rect.x += 3
                 if not (pg.sprite.spritecollideany(self, walls)):
                     ds.append(2)
-                self.rect.x -= 3
+                self.rect.x -= 5
                 if not (pg.sprite.spritecollideany(self, walls)):
                     ds.append(4)
-                self.rect.x += 1
+                self.rect.x += 2
                 if ds:
                     self.d = choice(ds)
                     if self.d == 1:
@@ -157,24 +174,24 @@ class Enemy(pg.sprite.Sprite):
                 else:
                     self.d = 0
             if self.d == 1:
-                self.rect.y -= 1
+                self.rect.y -= 2
                 if pg.sprite.spritecollideany(self, walls):
-                    self.rect.y += 1
+                    self.rect.y += 2
                     self.count = 0
             if self.d == 3:
-                self.rect.y += 1
+                self.rect.y += 2
                 if pg.sprite.spritecollideany(self, walls):
-                    self.rect.y -= 1
+                    self.rect.y -= 2
                     self.count = 0
             if self.d == 2:
-                self.rect.x += 1
+                self.rect.x += 2
                 if pg.sprite.spritecollideany(self, walls):
-                    self.rect.x -= 1
+                    self.rect.x -= 2
                     self.count = 0
             if self.d == 4:
-                self.rect.x -= 1
+                self.rect.x -= 2
                 if pg.sprite.spritecollideany(self, walls):
-                    self.rect.x += 1
+                    self.rect.x += 2
                     self.count = 0
             self.count -= 1
 
@@ -182,9 +199,16 @@ class Enemy(pg.sprite.Sprite):
 class DeadZombie(pg.sprite.Sprite):
     image = pg.image.load(os.path.join('data', 'zombie_dead.png'))
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, d):
         super(DeadZombie, self).__init__(death)
-        self.image = DeadZombie.image
+        if d == 1:
+            self.image = DeadZombie.image
+        elif d == 3:
+            self.image = pg.transform.flip(DeadZombie.image, False, True)
+        elif d == 2:
+            self.image = pg.transform.rotate(DeadZombie.image, 90)
+        else:
+            self.image = pg.transform.rotate(DeadZombie.image, 90)
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -205,64 +229,90 @@ class Bullet(pg.sprite.Sprite):
             self.image = pg.transform.rotate(Bullet.image, 90)
         self.rect = self.image.get_rect()
         if d % 2:
-            self.rect.x = x + 6
-            self.rect.y = y - 9 + (d // 2) * 25
+            self.rect.x = x + 16
+            self.rect.y = y - 6 + (d // 2) * 35
         else:
-            self.rect.x = x + 16 - (d // 4) * 30
-            self.rect.y = y + 6
+            self.rect.x = x + 35 - (d // 4) * 42
+            self.rect.y = y + 16
         self.d = d
 
     def update(self):
         if self.d == 1:
-            self.rect.y -= 3
+            self.rect.y -= 6
         elif self.d == 3:
-            self.rect.y += 3
+            self.rect.y += 6
         elif self.d == 2:
-            self.rect.x += 3
+            self.rect.x += 6
         elif self.d == 4:
-            self.rect.x -= 3
+            self.rect.x -= 6
         if wall := pg.sprite.spritecollideany(self, walls):
-            if not (((wall.rect.x / 30) and (wall.rect.y / 30 == 0)) or (
-                    (wall.rect.x / 30 == 0) and (wall.rect.y / 30)) or
-                    ((wall.rect.x / 30) and (wall.rect.y / 30 == 10)) or (
-                            (wall.rect.x / 30 == 10) and (wall.rect.y / 30))):
+            if not (((wall.rect.x / 70) and (wall.rect.y / 70 == 0)) or (
+                    (wall.rect.x / 70 == 0) and (wall.rect.y / 70)) or
+                    ((wall.rect.x / 70) and (wall.rect.y / 70 == 10)) or (
+                            (wall.rect.x / 70 == 10) and (wall.rect.y / 70))):
                 walls.remove(wall)
             self.kill()
         elif z := pg.sprite.spritecollideany(self, enemies):
+            DeadZombie(z.rect.x, z.rect.y, z.d)
             z.kill()
-            DeadZombie(z.rect.x, z.rect.y)
             self.kill()
 
 
-def new_game(wins, player):
+def new_game(wins0, player, score0):
     global score, rec_zap
     enemies.empty()
     walls.empty()
     death.empty()
     x = 11
     y = 11
-    score = 0
+    score = score0
     rec_zap = False
-    player.rect.x = (x // 2) * 30
-    player.rect.y = (y - 3) * 30
-    pg.display.set_caption('Мега Супер Пупер Выживание Против Зомби Насмерть 18+')
+    player.rect.x = (x // 2) * 70
+    player.rect.y = (y - 3) * 70
     walls_pos, free_cell = create_map(x, y)
     for wall in walls_pos:
         Wall(*wall)
-    cells = choices(free_cell, k=(min((x - 2) * (y - 2) // 8 + wins * 3, len(free_cell) - 4)))
+    cells = choices(free_cell, k=(min((x - 2) * (y - 2) // 8 + wins0 * 3, len(free_cell) - 4)))
     for enemy in cells:
         Enemy(*enemy)
 
 
+def clear_z():
+    global enemies, walls, death, player_soldier, bullets
+    enemies.empty()
+    walls.empty()
+    death.empty()
+    player_soldier.empty()
+    bullets.empty()
+
+
 def zombie_start():
     global score, rec_zap
-    pg.init()
     x = 11
     y = 11
-    size = (x * 30, y * 30)
+    size = (x * 70, y * 70)
     screen = pg.display.set_mode(size)
     clock = pg.time.Clock()
     pg.display.set_caption('Мега Супер Пупер Выживание Против Зомби Насмерть 18+')
+    zombie_prev = pg.image.load(os.path.join('prevs', 'survival_img.png'))
+
+    def zombie_pause():
+        pause = True
+        screen.blit(zombie_prev, (0, 0))
+        pg.display.flip()
+        while pause:
+            for event_p in pg.event.get():
+                if event_p.type == pg.QUIT:
+                    return
+                if event_p.type == pg.KEYDOWN:
+                    if event_p.key == pg.K_ESCAPE:
+                        return True
+                    else:
+                        pause = False
+
+    if zombie_pause():
+        clear_z()
+        return
     walls_pos, free_cell = create_map(x, y)
     for wall in walls_pos:
         Wall(*wall)
@@ -271,14 +321,14 @@ def zombie_start():
     for enemy in cells:
         Enemy(*enemy)
     score = 0
-    wins = 0
+    wins1 = 0
     rec_zap = False
     running = True
     pg.key.set_repeat(200, 20)
 
     while running:
         for event in pg.event.get():
-            if event.type == pg.QUIT:
+            if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
                 running = False
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_DOWN:
@@ -293,24 +343,26 @@ def zombie_start():
                 if event.key == pg.K_LEFT:
                     player.move(4)
                     player.povorot(4)
-            if event.type == pg.MOUSEBUTTONDOWN or (event.type == pg.KEYDOWN and event.key == pg.K_SPACE):
-                if player.reload >= 20:
-                    if player.live:
+                if event.key == pg.K_SPACE:
+                    if player.reload >= 40 and player.live:
                         Bullet(player.rect.x, player.rect.y, player.last_d)
                         player.reload = 0
-            if event.type == pg.KEYDOWN and event.key == pg.K_r:
-                player.live = True
-                new_game(0, player)
-                wins = 0
+                if event.key == pg.K_r:
+                    player.live = True
+                    new_game(0, player, 0)
+                    wins1 = 0
+                if event.key == pg.K_TAB:
+                    if zombie_pause():
+                        running = False
         if not player.live:
             if not rec_zap:
                 rec_zap = True
                 new_rec(score)
 
         if len(enemies) == 0:
-            wins += 1
+            wins1 += 1
             score += len(death)
-            new_game(wins, player)
+            new_game(wins1, player, score)
         screen.fill((0, 0, 0))
         death.draw(screen)
         death.update()
@@ -322,19 +374,14 @@ def zombie_start():
         player_soldier.update()
         bullets.draw(screen)
         bullets.update()
-        f = pg.font.Font(None, 20)
+        f = pg.font.Font(None, 60)
         text_score = f.render(f'{score + len(death)}', True,
                               (0, 240, 240))
         screen.blit(text_score, (5, 5))
         if not player.live:
-            f = pg.font.Font(None, 20)
-            text_score = f.render(f"Вы проиграли! Нажмите R для новой игры.", True,
-                                  (255, 0, 0))
-            screen.blit(text_score, (20, 100))
+            f = pg.font.Font(None, 50)
+            text = f.render(f"Вы проиграли! Нажмите R для новой игры.", True, (255, 0, 0))
+            screen.blit(text, (10, 200))
         pg.display.flip()
         clock.tick(50)
-    enemies.empty()
-    walls.empty()
-    death.empty()
-    player_soldier.empty()
-    bullets.empty()
+    clear_z()
