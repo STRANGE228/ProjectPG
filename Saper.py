@@ -50,6 +50,9 @@ class Minesweeper(Board):
         self.bombs = bombs
         self.timer = pg.USEREVENT + 1
         pg.time.set_timer(self.timer, 1000)
+        self.music_saper = pg.mixer.Sound(os.path.join('sound', 'saper_music.mp3'))
+        self.boom = pg.mixer.Sound(os.path.join('sound', 'saper_boom.mp3'))
+        self.win = pg.mixer.Sound(os.path.join('sound', 'saper_win.mp3'))
         self.end = False
         self.status_end = None
         self.first_step = None
@@ -101,7 +104,6 @@ class Minesweeper(Board):
         if self.board[cell[0]][cell[1]] == -1:
             if (cell[0], cell[1]) in self.flags:
                 self.flags.remove((cell[0], cell[1]))
-            self.count += 1
             summa = 0
             for dx in range(-1, 2):
                 for dy in range(-1, 2):
@@ -118,9 +120,13 @@ class Minesweeper(Board):
                             if dx == 0 and dy == 0:
                                 continue
                             self.open_cell((cell[0] + dx, cell[1] + dy))
+            sp = [1 if self.board[x][y] == -1 else 0 for y in range(self.height) for x in range(self.width)]
+            self.count = self.width * self.height - self.bombs - sum(sp)
             if self.count == self.width * self.height - self.bombs:
                 self.end = True
                 self.status_end = 'win'
+                self.music_saper.stop()
+                self.win.play()
                 db = sqlite3.connect('records.db')
                 cur = db.cursor()
                 if self.width == 9:
@@ -151,6 +157,8 @@ class Minesweeper(Board):
             elif self.board[cell[0]][cell[1]] == -10:
                 self.end = True
                 self.status_end = 'lose'
+                self.music_saper.stop()
+                self.boom.play(fade_ms=2)
 
     def get_flag(self, mouse_pos):
         cell = self.get_cell(mouse_pos)
@@ -167,6 +175,7 @@ class Minesweeper(Board):
         self.first_step = True
         self.board = [[-1] * self.height for _ in range(self.width)]
         self.render(screen)
+        self.music_saper.play(-1)
         pg.display.flip()
 
     def create_map(self, x1, y1):
@@ -188,21 +197,26 @@ def saper_start(x, y, bombs):
     screen.fill((0, 0, 0))
     screen.blit(pg.image.load(os.path.join('prevs', 'saper_img.png')), (0, 0))
     pg.display.flip()
+    board = Minesweeper(x, y, bombs, screen)
     while prev:
         for event in pg.event.get():
             if event.type == pg.QUIT:
+                board.music_saper.stop()
                 return
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
+                    board.music_saper.stop()
                     return
                 else:
                     prev = False
-    board = Minesweeper(x, y, bombs, screen)
+            if event.type == pg.MOUSEBUTTONDOWN:
+                prev = False
+    music_flag = True
     running = True
-
     while running:
         for event in pg.event.get():
             if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
+                board.music_saper.stop()
                 running = False
             if not board.end:
                 if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
@@ -213,6 +227,12 @@ def saper_start(x, y, bombs):
                     board.time += 1
             if event.type == pg.KEYDOWN and event.key == pg.K_r:
                 board.new_game(screen)
+            if event.type == pg.KEYDOWN and event.key == pg.K_q:
+                music_flag = not music_flag
+                if music_flag:
+                    board.music_saper.set_volume(1)
+                else:
+                    board.music_saper.set_volume(0)
         screen.fill((0, 0, 0))
         board.render(screen)
         pg.display.flip()

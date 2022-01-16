@@ -63,6 +63,7 @@ class Wall(pg.sprite.Sprite):
 class Player(pg.sprite.Sprite):
     image0 = pg.image.load(os.path.join('data', 'soldier0.png'))
     image1 = pg.image.load(os.path.join('data', 'soldier1.png'))
+    image_dead = pg.image.load(os.path.join('data', 'soldier_dead.png'))
 
     def __init__(self, x, y):
         super(Player, self).__init__(player_soldier)
@@ -76,6 +77,7 @@ class Player(pg.sprite.Sprite):
         self.reload = 10
         self.count = 0
         self.img = 1
+        self.dead = pg.mixer.Sound(os.path.join('sound', 'survival_player_dead.mp3'))
 
     def move(self, d):
         if self.live:
@@ -126,7 +128,18 @@ class Player(pg.sprite.Sprite):
     def update(self):
         self.reload += 1
         if pg.sprite.spritecollideany(self, enemies):
-            self.live = False
+            if self.live:
+                self.dead.play(maxtime=500)
+                if self.last_d == 1:
+                    self.image = Player.image_dead
+                elif self.last_d == 3:
+                    self.image = pg.transform.flip(Player.image_dead, False, True)
+                elif self.last_d == 2:
+                    self.image = pg.transform.rotate(Player.image_dead, 90)
+                else:
+                    self.image = pg.transform.rotate(Player.image_dead, 90)
+                self.live = False
+
 
 
 class Enemy(pg.sprite.Sprite):
@@ -251,9 +264,11 @@ class Bullet(pg.sprite.Sprite):
                     ((wall.rect.x / 70) and (wall.rect.y / 70 == 10)) or (
                             (wall.rect.x / 70 == 10) and (wall.rect.y / 70))):
                 walls.remove(wall)
+                pg.mixer.Sound(os.path.join('sound', 'survival_crash_wall.wav')).play()
             self.kill()
         elif z := pg.sprite.spritecollideany(self, enemies):
             DeadZombie(z.rect.x, z.rect.y, z.d)
+            pg.mixer.Sound(os.path.join('sound', 'survival_zombie_dead.wav')).play(maxtime=500)
             z.kill()
             self.kill()
 
@@ -277,15 +292,6 @@ def new_game(wins0, player, score0):
         Enemy(*enemy)
 
 
-def clear_z():
-    global enemies, walls, death, player_soldier, bullets
-    enemies.empty()
-    walls.empty()
-    death.empty()
-    player_soldier.empty()
-    bullets.empty()
-
-
 def zombie_start():
     global score, rec_zap
     x = 11
@@ -295,6 +301,16 @@ def zombie_start():
     clock = pg.time.Clock()
     pg.display.set_caption('Мега Супер Пупер Выживание Против Зомби Насмерть 18+')
     zombie_prev = pg.image.load(os.path.join('prevs', 'survival_img.png'))
+    shot_survival = pg.mixer.Sound(os.path.join('sound', 'survival_shot.mp3'))
+
+    def clear_z():
+        global enemies, walls, death, player_soldier, bullets
+        enemies.empty()
+        walls.empty()
+        death.empty()
+        player_soldier.empty()
+        bullets.empty()
+        music_survival.stop()
 
     def zombie_pause():
         pause = True
@@ -303,16 +319,20 @@ def zombie_start():
         while pause:
             for event_p in pg.event.get():
                 if event_p.type == pg.QUIT:
-                    return
+                    return True
                 if event_p.type == pg.KEYDOWN:
                     if event_p.key == pg.K_ESCAPE:
                         return True
                     else:
                         pause = False
+                if event_p.type == pg.MOUSEBUTTONDOWN:
+                    pause = False
 
     if zombie_pause():
         clear_z()
         return
+
+    music_survival = pg.mixer.Sound(os.path.join('sound', 'survival_music.mp3'))
     walls_pos, free_cell = create_map(x, y)
     for wall in walls_pos:
         Wall(*wall)
@@ -324,36 +344,48 @@ def zombie_start():
     wins1 = 0
     rec_zap = False
     running = True
+    music_flag = True
     pg.key.set_repeat(200, 20)
-
+    music_survival.play(-1)
     while running:
         for event in pg.event.get():
             if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
                 running = False
             if event.type == pg.KEYDOWN:
-                if event.key == pg.K_DOWN:
+                if event.key == pg.K_s:
                     player.move(3)
                     player.povorot(3)
-                if event.key == pg.K_UP:
+                if event.key == pg.K_w:
                     player.move(1)
                     player.povorot(1)
-                if event.key == pg.K_RIGHT:
+                if event.key == pg.K_d:
                     player.move(2)
                     player.povorot(2)
-                if event.key == pg.K_LEFT:
+                if event.key == pg.K_a:
                     player.move(4)
                     player.povorot(4)
                 if event.key == pg.K_SPACE:
                     if player.reload >= 40 and player.live:
                         Bullet(player.rect.x, player.rect.y, player.last_d)
                         player.reload = 0
+                        shot_survival.play()
                 if event.key == pg.K_r:
                     player.live = True
                     new_game(0, player, 0)
                     wins1 = 0
                 if event.key == pg.K_TAB:
+                    music_survival.stop()
                     if zombie_pause():
                         running = False
+                    else:
+                        music_survival.play(-1)
+                if event.key == pg.K_q:
+                    music_flag = not music_flag
+                    if music_flag:
+                        music_survival.set_volume(1)
+                    else:
+                        music_survival.set_volume(0)
+
         if not player.live:
             if not rec_zap:
                 rec_zap = True
@@ -366,12 +398,12 @@ def zombie_start():
         screen.fill((0, 0, 0))
         death.draw(screen)
         death.update()
+        player_soldier.draw(screen)
+        player_soldier.update()
         walls.draw(screen)
         walls.update()
         enemies.draw(screen)
         enemies.update()
-        player_soldier.draw(screen)
-        player_soldier.update()
         bullets.draw(screen)
         bullets.update()
         f = pg.font.Font(None, 60)

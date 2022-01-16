@@ -55,9 +55,11 @@ class PlayerFall(pg.sprite.Sprite):
             self.live = False
         if bul := pg.sprite.spritecollideany(self, spawn_bul):
             bul.kill()
+            pg.mixer.Sound(os.path.join('sound', 'fallgame_ammo.mp3')).play()
             self.bullets += 1
             self.score += 1
         if pg.sprite.spritecollideany(self, enemy_sprite):
+            pg.mixer.Sound(os.path.join('sound', 'fallgame_dead.wav')).play()
             self.live = False
 
 
@@ -126,22 +128,22 @@ class SpawnBullet(pg.sprite.Sprite):
         self.rect.y = y
 
 
-def fallgame_clear():
-    player_sprite.empty()
-    enemy_sprite.empty()
-    bullet_sprite.empty()
-    spawn_bul.empty()
-    pg.mouse.set_visible(True)
-
-
 def fall_start():
     screen = pg.display.set_mode((800, 600), pg.FULLSCREEN)
     clock = pg.time.Clock()
     running = True
     arrow = pg.image.load(os.path.join('data', 'arrow.png'))
     player, gun = None, None
-
+    music_fallgame = pg.mixer.Sound(os.path.join('sound', 'fallgame_music.mp3'))
     fallgame_prev = pg.image.load(os.path.join('prevs', 'spirte_fall_img.png'))
+
+    def fallgame_clear():
+        player_sprite.empty()
+        enemy_sprite.empty()
+        bullet_sprite.empty()
+        spawn_bul.empty()
+        pg.mouse.set_visible(True)
+        music_fallgame.stop()
 
     def fallgame_pause():
         pause = True
@@ -150,7 +152,7 @@ def fall_start():
         while pause:
             for event_p in pg.event.get():
                 if event_p.type == pg.QUIT:
-                    return
+                    return True
                 if event_p.type == pg.KEYDOWN:
                     if event_p.key == pg.K_ESCAPE:
                         return True
@@ -169,10 +171,13 @@ def fall_start():
         spawn_bul.empty()
         player = PlayerFall()
         gun = GunFall(player)
+
     new_game()
     coord = 0, 0
     count = 0
+    music_fallgame.play(-1)
     pg.mouse.set_visible(False)
+    music_flag = True
     while running:
         screen.fill((240, 250, 240))
         for event in pg.event.get():
@@ -188,13 +193,23 @@ def fall_start():
                         BulletFall(player.rect.x + GunFall.image.get_width() * cos(angle) // 2,
                                    player.rect.y + 25 + GunFall.image.get_height() * sin(angle) // 2,
                                    cos(angle) * 7, sin(angle) * 7, angle)
+                        pg.mixer.Sound(os.path.join('sound', 'fallgame_shot.wav')).play(maxtime=500)
             if event.type == pg.MOUSEMOTION:
                 coord = event.pos
                 angle = atan2((event.pos[1] - gun.rect.y), (event.pos[0] - gun.rect.x))
                 gun.angle = angle
             if event.type == pg.KEYDOWN and event.key == pg.K_TAB:
+                music_fallgame.stop()
                 if fallgame_pause():
                     running = False
+                else:
+                    music_fallgame.play(-1)
+            if event.type == pg.KEYDOWN and event.key == pg.K_q:
+                music_flag = not music_flag
+                if music_flag:
+                    music_fallgame.set_volume(1)
+                else:
+                    music_fallgame.set_volume(0)
         if player.live:
             if len(spawn_bul) < 2:
                 for _ in range(2 - len(spawn_bul)):

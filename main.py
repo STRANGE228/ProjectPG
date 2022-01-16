@@ -22,7 +22,9 @@ class Menu:
         self.x = 800
         self.y = 600
         self.size = self.x, self.y
-        self.first_screen = pg.image.load(os.path.join('data', 'first_menu.jpg'))
+        self.first_menu = pg.image.load(os.path.join('data', 'first_main.jpg'))
+        self.menu = pg.image.load(os.path.join('data', 'first_menu.jpg'))
+
 
     def main_scene(self):
         self.buttons = [(300, 100, '        Играть'),
@@ -83,14 +85,16 @@ class Menu:
         pg.display.flip()
 
     def render(self, screen):
-        if self.scene == 'main' or self.scene == 'record' or self.scene == 'play' or self.scene == 'begin_minesweeper':
-            screen.blit(self.first_screen, (0, 0))
-        for button in self.buttons:
-            pg.draw.rect(screen, (0, 200, 0), (button[0], button[1], self.buttons_size[0], self.buttons_size[1]))
-            f = pg.font.Font(None, 36)
-            text = f.render(f'{button[2]}', True,
-                            (0, 0, 200))
-            screen.blit(text, (button[0], button[1]))
+        if self.scene == 'main':
+            screen.blit(self.first_menu, (0, 0))
+        elif self.scene == 'record' or self.scene == 'play' or self.scene == 'begin_minesweeper':
+            screen.blit(self.menu, (0, 0))
+            for button in self.buttons:
+                pg.draw.rect(screen, (0, 200, 0), (button[0], button[1], self.buttons_size[0], self.buttons_size[1]))
+                f = pg.font.Font(None, 36)
+                text = f.render(f'{button[2]}', True,
+                                (0, 0, 200))
+                screen.blit(text, (button[0], button[1]))
         if self.scene == 'record':
             db = sqlite3.connect('records.db')
             cur = db.cursor()
@@ -154,13 +158,14 @@ class Menu:
 
 
 def main():
+    pg.mixer.pre_init(44100, -16, 4, 512)
     pg.init()
     size = (800, 600)
     screen = pg.display.set_mode(size)
     menu = Menu(screen)
-
     clock = pg.time.Clock()
     pg.display.set_caption('Меню')
+    click = pg.mixer.Sound(os.path.join('sound', 'click.mp3'))
 
     running = True
 
@@ -169,6 +174,7 @@ def main():
             if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
                 running = False
             if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+                click.play()
                 menu.click(event.pos)
 
         menu.render(screen)

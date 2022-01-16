@@ -37,6 +37,7 @@ class Player(pg.sprite.Sprite):
                                     pg.sprite.spritecollideany(self, sprites_2)):
                         if obstacle.typ != 1:
                             self.live = False
+                            pg.mixer.Sound(os.path.join('sound', 'gleid_dead.mp3')).play()
                         self.rect.y -= 4
                         self.rect.y = obstacle.rect.y - 30
                         self.onGround = True
@@ -131,6 +132,7 @@ class Check(pg.sprite.Sprite):
         self.rect.x = self.p.rect.x + 3
         self.rect.y = self.p.rect.y + 1
         if pg.sprite.spritecollideany(self, sprites_1) or pg.sprite.spritecollideany(self, sprites_2):
+            pg.mixer.Sound(os.path.join('sound', 'gleid_dead.mp3')).play()
             self.p.live = False
 
 
@@ -161,14 +163,6 @@ def zap_rec(score):
     db.commit()
 
 
-def gleid_clear():
-    player_sprite.empty()
-    sprites_1.empty()
-    sprites_2.empty()
-    ground_sprite.empty()
-    check_sprite.empty()
-
-
 def gleid_start():
     screen = pg.display.set_mode((800, 600), pg.FULLSCREEN)
     clock = pg.time.Clock()
@@ -176,6 +170,15 @@ def gleid_start():
     player = Player()
     Ground()
     check = Check(player)
+    music_gleid = pg.mixer.Sound(os.path.join('sound', f'gleid_music{randint(0, 1)}.mp3'))
+
+    def gleid_clear():
+        player_sprite.empty()
+        sprites_1.empty()
+        sprites_2.empty()
+        ground_sprite.empty()
+        check_sprite.empty()
+        music_gleid.stop()
 
     def new_game():
         nonlocal player, t, count, check
@@ -197,7 +200,7 @@ def gleid_start():
         while pause:
             for event_p in pg.event.get():
                 if event_p.type == pg.QUIT:
-                    return
+                    return True
                 if event_p.type == pg.KEYDOWN:
                     if event_p.key == pg.K_ESCAPE:
                         return True
@@ -210,6 +213,8 @@ def gleid_start():
 
     t = 0
     count = 0
+    music_flag = True
+    music_gleid.play(-1)
     while running:
         screen.fill((150, 0, 150))
         for event in pg.event.get():
@@ -217,10 +222,20 @@ def gleid_start():
                 running = False
             if event.type == pg.MOUSEBUTTONDOWN or (event.type == pg.KEYDOWN and event.key == pg.K_SPACE):
                 if player.onGround:
+                    pg.mixer.Sound(os.path.join('sound', 'gleid_jump.mp3')).play()
                     player.inJump = True
             if event.type == pg.KEYDOWN and event.key == pg.K_TAB:
+                music_gleid.stop()
                 if gleid_pause():
                     running = False
+                else:
+                    music_gleid.play(-1)
+            if event.type == pg.KEYDOWN and event.key == pg.K_q:
+                music_flag = not music_flag
+                if music_flag:
+                    music_gleid.set_volume(1)
+                else:
+                    music_gleid.set_volume(0)
         if count <= 0:
             create_obstacle()
             count = 800
@@ -231,10 +246,13 @@ def gleid_start():
             sprites_1.update()
             sprites_2.update()
         else:
+            if t == 0:
+                music_gleid.stop()
             t += 1
             if t < 50:
                 player.dead(t)
             else:
+                music_gleid.play(-1)
                 check.kill()
                 zap_rec(player.score)
                 new_game()
