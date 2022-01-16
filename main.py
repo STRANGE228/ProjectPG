@@ -24,7 +24,14 @@ class Menu:
         self.size = self.x, self.y
         self.first_menu = pg.image.load(os.path.join('data', 'first_main.jpg'))
         self.menu = pg.image.load(os.path.join('data', 'first_menu.jpg'))
-
+        self.record_menu = pg.image.load(os.path.join('data', 'records.png'))
+        self.game_menu = pg.image.load(os.path.join('data', 'game_select.png'))
+        self.names = {'Zombie_Survival': 'Zombie Survival',
+                      'Saper_hard': 'Сложный Сапёр',
+                      'Saper_medium': 'Средний Сапёр',
+                      'Saper_easy': 'Лёгкий Сапёр',
+                      'Gleid': 'Gleid',
+                      'spirte_fall': 'Spirte Fall'}
 
     def main_scene(self):
         self.buttons = [(300, 100, '        Играть'),
@@ -87,7 +94,11 @@ class Menu:
     def render(self, screen):
         if self.scene == 'main':
             screen.blit(self.first_menu, (0, 0))
-        elif self.scene == 'record' or self.scene == 'play' or self.scene == 'begin_minesweeper':
+        elif self.scene == 'record':
+            screen.blit(self.record_menu, (0, 0))
+        elif self.scene == 'play':
+            screen.blit(self.game_menu, (0, 0))
+        elif self.scene == 'begin_minesweeper':
             screen.blit(self.menu, (0, 0))
             for button in self.buttons:
                 pg.draw.rect(screen, (0, 200, 0), (button[0], button[1], self.buttons_size[0], self.buttons_size[1]))
@@ -103,11 +114,11 @@ class Menu:
             h = 20
             for rec in recs:
                 f = pg.font.Font(None, 60)
-                text = f.render(f'{rec[0]}', True,
-                                (200, 0, 0))
+                text = f.render(f'{self.names[rec[0]]}', True,
+                                (255, 20, 147))
                 self.screen.blit(text, (140, h))
                 text = f.render(f'{rec[1]}', True,
-                                (200, 0, 0))
+                                (255, 20, 147))
                 self.screen.blit(text, (540, h))
                 h += 80
 

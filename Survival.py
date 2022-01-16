@@ -141,7 +141,6 @@ class Player(pg.sprite.Sprite):
                 self.live = False
 
 
-
 class Enemy(pg.sprite.Sprite):
     image = pg.image.load(os.path.join('data', 'zombie0.png'))
 
@@ -282,6 +281,9 @@ def new_game(wins0, player, score0):
     y = 11
     score = score0
     rec_zap = False
+    player.image = Player.image0
+    player.img = 1
+    player.count = 0
     player.rect.x = (x // 2) * 70
     player.rect.y = (y - 3) * 70
     walls_pos, free_cell = create_map(x, y)
