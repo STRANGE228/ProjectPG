@@ -26,6 +26,7 @@ class Menu:
         self.menu = pg.image.load(os.path.join('data', 'first_menu.jpg'))
         self.record_menu = pg.image.load(os.path.join('data', 'records.png'))
         self.game_menu = pg.image.load(os.path.join('data', 'game_select.png'))
+        self.select_minesweeper = pg.image.load(os.path.join('data', 'minesweeper_difficulty_select.png'))
         self.names = {'Zombie_Survival': 'Zombie Survival',
                       'Saper_hard': 'Сложный Сапёр',
                       'Saper_medium': 'Средний Сапёр',
@@ -99,13 +100,7 @@ class Menu:
         elif self.scene == 'play':
             screen.blit(self.game_menu, (0, 0))
         elif self.scene == 'begin_minesweeper':
-            screen.blit(self.menu, (0, 0))
-            for button in self.buttons:
-                pg.draw.rect(screen, (0, 200, 0), (button[0], button[1], self.buttons_size[0], self.buttons_size[1]))
-                f = pg.font.Font(None, 36)
-                text = f.render(f'{button[2]}', True,
-                                (0, 0, 200))
-                screen.blit(text, (button[0], button[1]))
+            screen.blit(self.select_minesweeper, (0, 0))
         if self.scene == 'record':
             db = sqlite3.connect('records.db')
             cur = db.cursor()
