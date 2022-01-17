@@ -13,7 +13,7 @@ num = 1
 
 
 class Player(pg.sprite.Sprite):
-    image = pg.image.load(os.path.join('data', 'cube1.png'))
+    image = pg.image.load(os.path.join('data', 'gleid_hero.png'))
 
     def __init__(self):
         super().__init__(player_sprite)
@@ -36,8 +36,9 @@ class Player(pg.sprite.Sprite):
                     if obstacle := (pg.sprite.spritecollideany(self, sprites_1) or
                                     pg.sprite.spritecollideany(self, sprites_2)):
                         if obstacle.typ != 1:
-                            self.live = False
-                            pg.mixer.Sound(os.path.join('sound', 'gleid_dead.mp3')).play()
+                            if self.live:
+                                self.live = False
+                                pg.mixer.Sound(os.path.join('sound', 'gleid_dead.mp3')).play(maxtime=800)
                         self.rect.y -= 4
                         self.rect.y = obstacle.rect.y - 30
                         self.onGround = True
@@ -58,7 +59,9 @@ class Player(pg.sprite.Sprite):
                     if obstacle := (pg.sprite.spritecollideany(self, sprites_1) or
                                     pg.sprite.spritecollideany(self, sprites_2)):
                         if obstacle.typ != 1:
-                            self.live = False
+                            if self.live:
+                                self.live = False
+                                pg.mixer.Sound(os.path.join('sound', 'gleid_dead.mp3')).play(maxtime=800)
                         self.rect.y += 4
                         self.rect.y = obstacle.rect.y + 30
                         self.jump = 0
@@ -73,11 +76,11 @@ class Player(pg.sprite.Sprite):
     def dead(self, t):
         if t < 50:
             if 35 > t > 5:
-                self.image = pg.image.load(os.path.join('data', f'player_gleid_dead{t // 5}.png'))
+                self.image = pg.image.load(os.path.join('data', f'gleid_death_frame{t // 5}.png'))
 
 
 class Ground(pg.sprite.Sprite):
-    image = pg.image.load(os.path.join('data', 'ground1.png'))
+    image = pg.image.load(os.path.join('data', 'ground.png'))
 
     def __init__(self):
         super().__init__(ground_sprite)
@@ -132,8 +135,9 @@ class Check(pg.sprite.Sprite):
         self.rect.x = self.p.rect.x + 3
         self.rect.y = self.p.rect.y + 1
         if pg.sprite.spritecollideany(self, sprites_1) or pg.sprite.spritecollideany(self, sprites_2):
-            pg.mixer.Sound(os.path.join('sound', 'gleid_dead.mp3')).play()
-            self.p.live = False
+            if self.p.live:
+                pg.mixer.Sound(os.path.join('sound', 'gleid_dead.mp3')).play(maxtime=800)
+                self.p.live = False
 
 
 def create_obstacle():
