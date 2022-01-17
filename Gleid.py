@@ -80,7 +80,7 @@ class Player(pg.sprite.Sprite):
 
 
 class Ground(pg.sprite.Sprite):
-    image = pg.image.load(os.path.join('data', 'ground.png'))
+    image = pg.image.load(os.path.join('data', 'ground1.png'))
 
     def __init__(self):
         super().__init__(ground_sprite)
@@ -89,9 +89,14 @@ class Ground(pg.sprite.Sprite):
         self.rect.x = 0
         self.rect.y = 540
 
+    def update(self):
+        self.rect.x -= 5
+        if self.rect.x <= -800:
+            self.rect.x = 0
+
 
 class Obstacle(pg.sprite.Sprite):
-    image_block = pg.image.load(os.path.join('data', 'brick.png'))
+    image_block = pg.image.load(os.path.join('data', 'block.png'))
     image_spike = pg.image.load(os.path.join('data', 'spike.png'))
 
     def __init__(self, n, x, y, typ):
@@ -172,7 +177,7 @@ def gleid_start():
     clock = pg.time.Clock()
     running = True
     player = Player()
-    Ground()
+    ground = Ground()
     check = Check(player)
     music_gleid = pg.mixer.Sound(os.path.join('sound', f'gleid_music{randint(0, 1)}.mp3'))
 
@@ -196,6 +201,7 @@ def gleid_start():
         check = Check(player)
 
     gleid_prev = pg.image.load(os.path.join('prevs', 'gleid_img.png'))
+    bg_gleid = pg.image.load(os.path.join('data', 'gleid_bg.png'))
 
     def gleid_pause():
         pause = True
@@ -220,7 +226,7 @@ def gleid_start():
     music_flag = True
     music_gleid.play(-1)
     while running:
-        screen.fill((150, 0, 150))
+        screen.blit(bg_gleid, (ground.rect.x, 0))
         for event in pg.event.get():
             if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
                 running = False
@@ -249,6 +255,7 @@ def gleid_start():
             player_sprite.update()
             sprites_1.update()
             sprites_2.update()
+            ground_sprite.update()
         else:
             if t == 0:
                 music_gleid.stop()

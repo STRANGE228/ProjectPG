@@ -77,6 +77,9 @@ class Minesweeper(Board):
                     screen.blit(text, (self.left + col * self.cell_size + 1,
                                        self.top + row * self.cell_size + 1))
         for pos in self.flags:
+            if self.board[pos[0]][pos[1]] != -10 and self.board[pos[0]][pos[1]] != -1:
+                self.flags.remove(pos)
+                continue
             text = f.render('F', True,
                             (0, 0, 255))
             screen.blit(text, (self.left + pos[0] * self.cell_size + 1,
@@ -102,8 +105,8 @@ class Minesweeper(Board):
 
     def open_cell(self, cell):
         if self.board[cell[0]][cell[1]] == -1:
-            if (cell[0], cell[1]) in self.flags:
-                self.flags.remove((cell[0], cell[1]))
+            if cell in self.flags:
+                self.flags.remove(cell)
             summa = 0
             for dx in range(-1, 2):
                 for dy in range(-1, 2):
