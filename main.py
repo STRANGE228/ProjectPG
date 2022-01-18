@@ -125,8 +125,17 @@ class Menu:
         easter_image = pg.image.load('bs_s.jpg')
         self.screen.blit(easter_image, (0, 0))
         os.remove('bs_s.jpg')
+        music = pg.mixer.Sound(os.path.join('sound', 'easter_music.mp3'))
         pg.display.flip()
-        pg.time.wait(3000)
+        music.play(-1)
+        easter = True
+        while easter:
+            for event_easter in pg.event.get():
+                if event_easter.type == pg.QUIT:
+                    easter = False
+                if event_easter.type == pg.KEYDOWN:
+                    easter = False
+        music.stop()
 
     def click(self, mouse_pos):
         for button in self.buttons:
