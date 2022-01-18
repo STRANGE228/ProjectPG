@@ -372,11 +372,11 @@ def zombie_start():
                     new_game(0, player, 0)
                     wins1 = 0
                 if event.key == pg.K_TAB:
-                    music_survival.stop()
+                    pg.mixer.pause()
                     if zombie_pause():
                         running = False
                     else:
-                        music_survival.play(-1)
+                        pg.mixer.unpause()
                 if event.key == pg.K_q:
                     music_flag = not music_flag
                     if music_flag:

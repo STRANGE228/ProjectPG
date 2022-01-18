@@ -233,11 +233,11 @@ def gleid_start():
                     pg.mixer.Sound(os.path.join('sound', 'gleid_jump.mp3')).play()
                     player.inJump = True
             if event.type == pg.KEYDOWN and event.key == pg.K_TAB:
-                music_gleid.stop()
+                pg.mixer.pause()
                 if gleid_pause():
                     running = False
                 else:
-                    music_gleid.play(-1)
+                    pg.mixer.unpause()
             if event.type == pg.KEYDOWN and event.key == pg.K_q:
                 music_flag = not music_flag
                 if music_flag:
@@ -275,5 +275,5 @@ def gleid_start():
                              (0, 240, 240))
         screen.blit(text_open, (10, 10))
         pg.display.flip()
-        clock.tick(30)
+        clock.tick(25)
     gleid_clear()

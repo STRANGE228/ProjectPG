@@ -196,11 +196,11 @@ def fall_start():
                 angle = atan2((event.pos[1] - gun.rect.y), (event.pos[0] - gun.rect.x))
                 gun.angle = angle
             if event.type == pg.KEYDOWN and event.key == pg.K_TAB:
-                music_fallgame.stop()
+                pg.mixer.pause()
                 if fallgame_pause():
                     running = False
                 else:
-                    music_fallgame.play(-1)
+                    pg.mixer.unpause()
             if event.type == pg.KEYDOWN and event.key == pg.K_q:
                 music_flag = not music_flag
                 if music_flag:
