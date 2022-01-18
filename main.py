@@ -126,6 +126,7 @@ class Menu:
         self.screen.blit(easter_image, (0, 0))
         os.remove('bs_s.jpg')
         music = pg.mixer.Sound(os.path.join('sound', 'easter_music.mp3'))
+        pg.display.set_caption('Толпы кричат nkeeei воу-воу о боже и у меня есть грешки но на swag благословлён Богом (ПАСХАЛКА!)')
         pg.display.flip()
         music.play(-1)
         easter = True
@@ -136,6 +137,7 @@ class Menu:
                 if event_easter.type == pg.KEYDOWN:
                     easter = False
         music.stop()
+        pg.display.set_caption('Меню')
 
     def click(self, mouse_pos):
         for button in self.buttons:
