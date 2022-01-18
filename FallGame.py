@@ -158,6 +158,8 @@ def fall_start():
                         return True
                     else:
                         pause = False
+                if event_p.type == pg.MOUSEBUTTONDOWN:
+                    pause = False
 
     if fallgame_pause():
         fallgame_clear()

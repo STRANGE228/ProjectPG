@@ -216,6 +216,8 @@ def gleid_start():
                         return True
                     else:
                         pause = False
+                if event_p.type == pg.MOUSEBUTTONDOWN:
+                    pause = False
 
     if gleid_pause():
         gleid_clear()
