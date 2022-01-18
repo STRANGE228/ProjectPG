@@ -1,8 +1,4 @@
-import os
-import sqlite3
-
-import pygame as pg
-from random import choices, choice, randrange
+from imports import *
 
 enemies = pg.sprite.Group()
 walls = pg.sprite.Group()

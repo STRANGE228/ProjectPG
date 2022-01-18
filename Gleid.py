@@ -1,8 +1,4 @@
-import os
-import sqlite3
-from random import randint
-
-import pygame as pg
+from imports import *
 
 player_sprite = pg.sprite.Group()
 sprites_1 = pg.sprite.Group()

@@ -1,8 +1,4 @@
-import os
-import sqlite3
-
-import pygame as pg
-from random import choices
+from imports import *
 
 
 class Board:

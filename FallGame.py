@@ -1,9 +1,4 @@
-import os
-import sqlite3
-from random import randint
-from math import atan2, cos, sin, degrees
-
-import pygame as pg
+from imports import *
 
 player_sprite = pg.sprite.Group()
 enemy_sprite = pg.sprite.Group()

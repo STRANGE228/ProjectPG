@@ -3,8 +3,6 @@ from Gleid import *
 from Survival import *
 from FallGame import *
 
-import pygame as pg
-
 
 def exit_scene():
     pg.quit()
@@ -122,7 +120,10 @@ class Menu:
             if ((button[0] <= mouse_pos[0] < button[0] + self.buttons_size[0]) and
                     (button[1] <= mouse_pos[1] < button[1] + self.buttons_size[1])):
                 if 'Назад' in button[2]:
-                    self.main_scene()
+                    if self.scene == 'begin_minesweeper':
+                        self.play_scene()
+                    else:
+                        self.main_scene()
                 if self.scene == 'main':
                     if 'Играть' in button[2]:
                         self.play_scene()
@@ -130,9 +131,6 @@ class Menu:
                         self.record_scene()
                     elif 'Выход' in button[2]:
                         exit_scene()
-                elif self.scene == 'record':
-                    if 'Назад' in button[2]:
-                        self.main_scene()
                 elif self.scene == 'play':
                     if 'Minesweeper' in button[2]:
                         self.scene_begin_minesweeper()
