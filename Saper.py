@@ -189,6 +189,7 @@ def saper_start(x, y, bombs):
     y = y
     size = (20 * 2 + x * 30, 60 + 10 * 2 + y * 30)
     screen = pg.display.set_mode(size)
+    pg.display.set_caption('Сапёр')
     clock = pg.time.Clock()
     pg.display.set_caption('Сапер')
 

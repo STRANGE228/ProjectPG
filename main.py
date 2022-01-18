@@ -1,3 +1,5 @@
+import base64
+
 from Saper import *
 from Gleid import *
 from Survival import *
@@ -17,12 +19,13 @@ class Menu:
         self.buttons_size = (200, 60)
         self.rendering = True
         self.main_scene()
+        self.count_easter = 0
         self.x = 800
         self.y = 600
         self.size = self.x, self.y
         self.first_menu = pg.image.load(os.path.join('data', 'first_main.jpg'))
         self.menu = pg.image.load(os.path.join('data', 'first_menu.jpg'))
-        self.record_menu = pg.image.load(os.path.join('data', 'records.png'))
+        self.record_menu = pg.image.load(os.path.join('data', 'records.jpg'))
         self.game_menu = pg.image.load(os.path.join('data', 'game_select.png'))
         self.select_minesweeper = pg.image.load(os.path.join('data', 'minesweeper_difficulty_select.png'))
         self.names = {'Zombie_Survival': 'Zombie Survival',
@@ -44,7 +47,8 @@ class Menu:
                         (50, 50, 'Gleid'),
                         (300, 50, 'Minesweeper'),
                         (50, 200, 'Zombie Survival'),
-                        (300, 200, 'Spirt Fall')]
+                        (300, 200, 'Spirt Fall'),
+                        (550, 50, 'easter')]
         self.buttons_size = (200, 100)
         self.scene = 'play'
 
@@ -60,9 +64,6 @@ class Menu:
                         (300, 350, 'Эксперт')]
         self.buttons_size = (200, 100)
         self.scene = 'begin_minesweeper'
-
-    def scene_raceInWald(self):
-        self.scene = 'race_in_wald'
 
     def gleid(self):
         gleid_start()
@@ -108,12 +109,24 @@ class Menu:
             for rec in recs:
                 f = pg.font.Font(None, 60)
                 text = f.render(f'{self.names[rec[0]]}', True,
-                                (255, 20, 147))
+                                (0, 228, 0))
                 self.screen.blit(text, (140, h))
                 text = f.render(f'{rec[1]}', True,
-                                (255, 20, 147))
+                                (0, 228, 0))
                 self.screen.blit(text, (540, h))
                 h += 80
+
+    def easter_egg(self):
+        file_name_txt = os.path.join('data', 'bs_s.txt')
+        with open(file_name_txt, 'rb') as f:
+            img_data = base64.b64decode(f.read())
+        with open('bs_s.jpg', 'wb') as f:
+            f.write(img_data)
+        easter_image = pg.image.load('bs_s.jpg')
+        self.screen.blit(easter_image, (0, 0))
+        os.remove('bs_s.jpg')
+        pg.display.flip()
+        pg.time.wait(3000)
 
     def click(self, mouse_pos):
         for button in self.buttons:
@@ -134,15 +147,17 @@ class Menu:
                 elif self.scene == 'play':
                     if 'Minesweeper' in button[2]:
                         self.scene_begin_minesweeper()
-                    elif 'Race in Wald' in button[2]:
-                        self.scene_raceInWald()
-                        self.race()
                     elif 'Gleid' in button[2]:
                         self.gleid()
                     elif 'Zombie Survival' in button[2]:
                         self.zombie_game()
                     elif 'Spirt Fall' in button[2]:
                         self.fall_game()
+                    elif 'easter' in button[2]:
+                        self.count_easter += 1
+                        if self.count_easter == 5:
+                            self.easter_egg()
+                            self.count_easter = 0
 
                 elif self.scene == 'begin_minesweeper':
                     x, y, bombs = 0, 0, 0
@@ -166,6 +181,8 @@ def main():
     pg.init()
     size = (800, 600)
     screen = pg.display.set_mode(size)
+    icon = pg.image.load(os.path.join('data', 'icon.png'))
+    pg.display.set_icon(icon)
     menu = Menu(screen)
     clock = pg.time.Clock()
     pg.display.set_caption('Меню')

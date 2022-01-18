@@ -171,6 +171,7 @@ def zap_rec(score):
 def gleid_start():
     screen = pg.display.set_mode((800, 600), pg.FULLSCREEN)
     clock = pg.time.Clock()
+    pg.display.set_caption('GLEID')
     running = True
     player = Player()
     ground = Ground()
@@ -275,5 +276,5 @@ def gleid_start():
                              (0, 240, 240))
         screen.blit(text_open, (10, 10))
         pg.display.flip()
-        clock.tick(25)
+        clock.tick(30)
     gleid_clear()

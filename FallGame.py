@@ -125,6 +125,7 @@ class SpawnBullet(pg.sprite.Sprite):
 
 def fall_start():
     screen = pg.display.set_mode((800, 600), pg.FULLSCREEN)
+    pg.display.set_caption('СПИРТ!!! НЕ ПАДАЙ ПОЖАЛУЙСТА!!!! НЕЕЕЕЕЕЕЕЕЕТ!')
     clock = pg.time.Clock()
     running = True
     arrow = pg.image.load(os.path.join('data', 'arrow.png'))
