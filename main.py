@@ -7,6 +7,7 @@ from FallGame import *
 
 
 def exit_scene():
+    # Выход из pygame
     pg.quit()
     exit(0)
 
@@ -36,6 +37,7 @@ class Menu:
                       'spirte_fall': 'Spirte Fall'}
 
     def main_scene(self):
+        # Главное меню
         self.buttons = [(300, 100, '        Играть'),
                         (300, 200, '       Рекорды'),
                         (300, 300, '        Выход')]
@@ -43,6 +45,7 @@ class Menu:
         self.scene = 'main'
 
     def play_scene(self):
+        # Сцена выбора игры
         self.buttons = [(10, 500, 'Назад'),
                         (50, 50, 'Gleid'),
                         (300, 50, 'Minesweeper'),
@@ -53,11 +56,13 @@ class Menu:
         self.scene = 'play'
 
     def record_scene(self):
+        # Сцена рекордов игр
         self.buttons = [(10, 500, 'Назад')]
         self.buttons_size = (100, 50)
         self.scene = 'record'
 
     def scene_begin_minesweeper(self):
+        # Сцена выбора сложности Сапёра
         self.buttons = [(10, 500, 'Назад'),
                         (300, 50, 'Новичок'),
                         (300, 200, 'Средний'),
@@ -66,32 +71,33 @@ class Menu:
         self.scene = 'begin_minesweeper'
 
     def gleid(self):
+        # начало игры Gleid
         gleid_start()
         self.fix_screen()
 
-    def race(self):
-        pass
-        self.play_scene()
-        self.fix_screen()
-
     def minesweeper(self, x, y, bombs):
+        # начало игры Сапёр
         saper_start(x, y, bombs)
         self.fix_screen()
 
     def zombie_game(self):
+        # начало игры Zombie Survival
         zombie_start()
         self.fix_screen()
 
     def fall_game(self):
+        # начало игры Spirt Fall
         fall_start()
         self.fix_screen()
 
     def fix_screen(self):
+        # возвращение размера окна в исходное состояние
         pg.display.set_mode(self.size)
         pg.display.set_caption('Меню')
         pg.display.flip()
 
     def render(self, screen):
+        # отображение меню
         if self.scene == 'main':
             screen.blit(self.first_menu, (0, 0))
         elif self.scene == 'record':
@@ -117,19 +123,28 @@ class Menu:
                 h += 80
 
     def easter_egg(self):
+        # секретная пасхалка для команды 1 школы
         file_name_txt = os.path.join('data', 'bs_s.txt')
+        # расшифровка изображения из текстового файла
         with open(file_name_txt, 'rb') as f:
             img_data = base64.b64decode(f.read())
+        # запись данных картинки в картинку
         with open('bs_s.jpg', 'wb') as f:
             f.write(img_data)
+        # отображение картинки
         easter_image = pg.image.load('bs_s.jpg')
         self.screen.blit(easter_image, (0, 0))
+        # удаление следов картинки, чтобы нельзя было найти её в файлах проекта
         os.remove('bs_s.jpg')
+        # музыка для картинки
         music = pg.mixer.Sound(os.path.join('sound', 'easter_music.mp3'))
-        pg.display.set_caption('Толпы кричат nkeeei воу-воу о боже и у меня есть грешки но на swag благословлён Богом (ПАСХАЛКА!)')
+        # ...
+        pg.display.set_caption('Толпы кричат nkeeei воу-воу о боже и у меня есть грешки'
+                               ' но на swag благословлён Богом (ПАСХАЛКА!)')
         pg.display.flip()
         music.play(-1)
         easter = True
+        # возможность выйти из пасхалки
         while easter:
             for event_easter in pg.event.get():
                 if event_easter.type == pg.QUIT:
@@ -140,6 +155,7 @@ class Menu:
         pg.display.set_caption('Меню')
 
     def click(self, mouse_pos):
+        # Функция обработки нажатий кнопок
         for button in self.buttons:
             if ((button[0] <= mouse_pos[0] < button[0] + self.buttons_size[0]) and
                     (button[1] <= mouse_pos[1] < button[1] + self.buttons_size[1])):
@@ -188,6 +204,7 @@ class Menu:
 
 
 def main():
+    # Функция запуска приложения
     pg.mixer.pre_init(44100, -16, 4, 512)
     pg.init()
     size = (800, 600)

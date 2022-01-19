@@ -58,6 +58,7 @@ class Minesweeper(Board):
         self.new_game(screen)
 
     def render(self, screen):
+        # прорисовка игры
         super(Minesweeper, self).render(screen)
         f = pg.font.Font(None, 36)
         for col in range(self.width):
@@ -73,6 +74,7 @@ class Minesweeper(Board):
                     screen.blit(text, (self.left + col * self.cell_size + 1,
                                        self.top + row * self.cell_size + 1))
         for pos in self.flags:
+            # отрисовка флагов
             if self.board[pos[0]][pos[1]] != -10 and self.board[pos[0]][pos[1]] != -1:
                 self.flags.remove(pos)
                 continue
@@ -81,6 +83,7 @@ class Minesweeper(Board):
             screen.blit(text, (self.left + pos[0] * self.cell_size + 1,
                                self.top + pos[1] * self.cell_size + 1))
 
+        # информация о текущей игре
         f = pg.font.Font(None, 25)
         text_open = f.render(f'Открыто {self.count}/{self.width * self.height - self.bombs}', True,
                              (0, 240, 240))
@@ -100,6 +103,7 @@ class Minesweeper(Board):
             screen.blit(text_open, (self.width // 2 * (self.width - 9) + 10, 30))
 
     def open_cell(self, cell):
+        # открытие клетки
         if self.board[cell[0]][cell[1]] == -1:
             if cell in self.flags:
                 self.flags.remove(cell)
@@ -119,6 +123,8 @@ class Minesweeper(Board):
                             if dx == 0 and dy == 0:
                                 continue
                             self.open_cell((cell[0] + dx, cell[1] + dy))
+
+            # проверка на победу
             sp = [1 if self.board[x][y] == -1 else 0 for y in range(self.height) for x in range(self.width)]
             self.count = self.width * self.height - self.bombs - sum(sp)
             if self.count == self.width * self.height - self.bombs:
@@ -144,6 +150,7 @@ class Minesweeper(Board):
                 db.commit()
 
     def get_click(self, mouse_pos):
+        # обработка нажатия кнопки мыши
         cell = self.get_cell(mouse_pos)
         if cell:
             if self.first_step:
@@ -160,12 +167,14 @@ class Minesweeper(Board):
                 self.boom.play(fade_ms=2)
 
     def get_flag(self, mouse_pos):
+        # поставить флаг
         cell = self.get_cell(mouse_pos)
         if cell:
             if self.board[cell[0]][cell[1]] == -1 or self.board[cell[0]][cell[1]] == -10:
                 self.flags.append(cell)
 
     def new_game(self, screen):
+        # новая игра
         self.flags = []
         self.end = False
         self.count = 0
@@ -178,6 +187,7 @@ class Minesweeper(Board):
         pg.display.flip()
 
     def create_map(self, x1, y1):
+        # создание карты
         mines = [(x, y) for y in range(self.height) for x in range(self.width)]
         mines.remove((x1, y1))
         for pos in choices(mines, k=self.bombs):
@@ -185,6 +195,7 @@ class Minesweeper(Board):
 
 
 def saper_start(x, y, bombs):
+    # начало игры
     x = x
     y = y
     size = (20 * 2 + x * 30, 60 + 10 * 2 + y * 30)

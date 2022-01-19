@@ -1,5 +1,6 @@
 from imports import *
 
+# Группы спрайтов необходимые для игры
 player_sprite = pg.sprite.Group()
 sprites_1 = pg.sprite.Group()
 sprites_2 = pg.sprite.Group()
@@ -26,6 +27,7 @@ class Player(pg.sprite.Sprite):
     def update(self):
         self.score += 0.1
         if not self.inJump:
+            # проверка на столкновения или на приземление
             if pg.sprite.spritecollideany(self, ground_sprite) is None:
                 if not(pg.sprite.spritecollideany(self, sprites_1) or pg.sprite.spritecollideany(self, sprites_2)):
                     self.rect.y += 4
@@ -48,6 +50,7 @@ class Player(pg.sprite.Sprite):
                     self.onGround = True
 
         if self.inJump:
+            # Прыжок игрока
             self.onGround = False
             if self.jump > -2:
                 if self.jump > 0:
@@ -70,6 +73,7 @@ class Player(pg.sprite.Sprite):
             self.onGround = True
 
     def dead(self, t):
+        # анимация смерти
         if t < 50:
             if 35 > t > 5:
                 self.image = pg.image.load(os.path.join('data', f'gleid_death_frame{t // 5}.png'))
@@ -86,6 +90,7 @@ class Ground(pg.sprite.Sprite):
         self.rect.y = 540
 
     def update(self):
+        # перемеение земли влево для имитации движения
         self.rect.x -= 5
         if self.rect.x <= -800:
             self.rect.x = 0
@@ -120,12 +125,14 @@ class Obstacle(pg.sprite.Sprite):
         self.rect.y = (y + 3) * 30
 
     def update(self):
+        # перемеение препятствий влево для имитации движения
         self.rect.x -= 5
         if self.rect.x < -30:
             self.kill()
 
 
 class Check(pg.sprite.Sprite):
+    # Класс для проверки столкновения игрока с блоком
     def __init__(self, player):
         super().__init__(check_sprite)
         self.p = player
@@ -142,6 +149,7 @@ class Check(pg.sprite.Sprite):
 
 
 def create_obstacle():
+    # Создание карты препятствий
     global num
     if num == 1:
         num = 2
@@ -158,6 +166,7 @@ def create_obstacle():
 
 
 def zap_rec(score):
+    # Запись рекорда
     db = sqlite3.connect('records.db')
     cur = db.cursor()
     sql1 = f"""select rec from record where Game like '%Gleid%'"""
@@ -169,6 +178,7 @@ def zap_rec(score):
 
 
 def gleid_start():
+    # Функция начала игры
     screen = pg.display.set_mode((800, 600), pg.FULLSCREEN)
     clock = pg.time.Clock()
     pg.display.set_caption('GLEID')
@@ -179,6 +189,7 @@ def gleid_start():
     music_gleid = pg.mixer.Sound(os.path.join('sound', f'gleid_music{randint(0, 1)}.mp3'))
 
     def gleid_clear():
+        # отчистка групп спрайтов
         player_sprite.empty()
         sprites_1.empty()
         sprites_2.empty()
@@ -187,6 +198,7 @@ def gleid_start():
         music_gleid.stop()
 
     def new_game():
+        # Перезапуск игры
         nonlocal player, t, count, check
         player_sprite.empty()
         sprites_1.empty()
@@ -201,6 +213,7 @@ def gleid_start():
     bg_gleid = pg.image.load(os.path.join('data', 'gleid_bg.png'))
 
     def gleid_pause():
+        # Функция паузы
         pause = True
         screen.blit(gleid_prev, (0, 0))
         pg.display.flip()

@@ -11,6 +11,7 @@ rec_zap = False
 
 
 def create_map(x0, y0):
+    # создание карты
     coords = ([(x, y) for y in range(1, y0) for x in range(1, x0)])
     walls_map = []
     for i in range(-1, 2):
@@ -22,6 +23,7 @@ def create_map(x0, y0):
             else:
                 coords.remove((x0 // 2 + i, y0 - 3 + j))
     for i in range(0, 11):
+        # добавление стен по краям, которые не ломаются
         walls_map.append((0, i))
         walls_map.append((i, 0))
         walls_map.append((10, i))
@@ -35,6 +37,7 @@ def create_map(x0, y0):
 
 
 def new_rec(score0):
+    # Запись рекорда
     db = sqlite3.connect('records.db')
     cur = db.cursor()
     sql1 = f"""select rec from record where Game like '%Survival%'"""
@@ -106,6 +109,7 @@ class Player(pg.sprite.Sprite):
                     self.rect.x += self.speed
 
     def povorot(self, d):
+        # поворот картинки игрока при изменение направления движения
         if self.live:
             self.last_d = d
             if self.img == 1:
@@ -152,6 +156,7 @@ class Enemy(pg.sprite.Sprite):
 
     def update(self):
         if self.live:
+            # Выбор направления движения противников
             if self.count <= 0:
                 self.count = randrange(10, 100)
                 ds = []
@@ -269,6 +274,7 @@ class Bullet(pg.sprite.Sprite):
 
 
 def new_game(wins0, player, score0):
+    # перезапуск игры
     global score, rec_zap
     enemies.empty()
     walls.empty()
@@ -291,6 +297,7 @@ def new_game(wins0, player, score0):
 
 
 def zombie_start():
+    # начало игры
     global score, rec_zap
     x = 11
     y = 11
@@ -302,6 +309,7 @@ def zombie_start():
     shot_survival = pg.mixer.Sound(os.path.join('sound', 'survival_shot.mp3'))
 
     def clear_z():
+        # отчистка групп спрайтов
         global enemies, walls, death, player_soldier, bullets
         enemies.empty()
         walls.empty()
@@ -311,6 +319,7 @@ def zombie_start():
         music_survival.stop()
 
     def zombie_pause():
+        # пауза
         pause = True
         screen.blit(zombie_prev, (0, 0))
         pg.display.flip()
@@ -390,6 +399,7 @@ def zombie_start():
                 new_rec(score)
 
         if len(enemies) == 0:
+            # переход на следуйщий уровень
             wins1 += 1
             score += len(death)
             new_game(wins1, player, score)

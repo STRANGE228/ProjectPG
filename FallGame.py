@@ -7,6 +7,7 @@ spawn_bul = pg.sprite.Group()
 
 
 def zap_record(score):
+    # Запись рекорда
     db = sqlite3.connect('records.db')
     cur = db.cursor()
     sql1 = f"""select rec from record where Game like '%spirte%'"""
@@ -32,6 +33,7 @@ class PlayerFall(pg.sprite.Sprite):
         self.dx, self.dy = 0, 0
 
     def update(self):
+        # движение игрока, проверка сбора банок и смерти
         self.rect = self.rect.move(self.dx, self.dy)
         if self.dy < 5:
             self.dy += 0.1
@@ -71,6 +73,7 @@ class GunFall(pg.sprite.Sprite):
         self.angle = 0
 
     def update(self):
+        # вращение банкострела в сторону прицела
         self.image = pg.transform.rotate(GunFall.image, -degrees(self.angle) - 90)
         self.rect.x = self.pl.rect.x + self.image.get_width() * cos(self.angle) // 2
         self.rect.y = self.pl.rect.y + 25 + self.image.get_height() * sin(self.angle) // 2
@@ -89,6 +92,7 @@ class BulletFall(pg.sprite.Sprite):
         self.dy = dy
 
     def update(self):
+        # полет банки
         self.rect = self.rect.move(self.dx, self.dy)
         if not(-self.image.get_width() <= self.rect.x < 800 + self.image.get_width()):
             self.kill()
@@ -107,6 +111,7 @@ class EnemyFall(pg.sprite.Sprite):
         self.rect.y = y
 
     def update(self):
+        # падение бутылок "Fantaser"а
         if self.rect.y > 600 + self.image.get_height():
             self.kill()
         self.rect.y += 5
@@ -124,6 +129,7 @@ class SpawnBullet(pg.sprite.Sprite):
 
 
 def fall_start():
+    # начало игры
     screen = pg.display.set_mode((800, 600), pg.FULLSCREEN)
     pg.display.set_caption('СПИРТ!!! НЕ ПАДАЙ ПОЖАЛУЙСТА!!!! НЕЕЕЕЕЕЕЕЕЕТ!')
     clock = pg.time.Clock()
@@ -134,6 +140,7 @@ def fall_start():
     fallgame_prev = pg.image.load(os.path.join('prevs', 'spirte_fall_img.png'))
 
     def fallgame_clear():
+        # отчистка групп спрайтов
         player_sprite.empty()
         enemy_sprite.empty()
         bullet_sprite.empty()
@@ -142,6 +149,7 @@ def fall_start():
         music_fallgame.stop()
 
     def fallgame_pause():
+        # пауза
         pause = True
         screen.blit(fallgame_prev, (0, 0))
         pg.display.flip()
@@ -162,6 +170,7 @@ def fall_start():
         return
 
     def new_game():
+        # перезапуск игры
         nonlocal player, gun
         player_sprite.empty()
         enemy_sprite.empty()
