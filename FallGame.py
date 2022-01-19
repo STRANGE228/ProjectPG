@@ -31,6 +31,7 @@ class PlayerFall(pg.sprite.Sprite):
         self.score = 0
         self.live = True
         self.dx, self.dy = 0, 0
+        self.mask = pg.mask.from_surface(self.image)
 
     def update(self):
         # движение игрока, проверка сбора банок и смерти
@@ -55,9 +56,11 @@ class PlayerFall(pg.sprite.Sprite):
             pg.mixer.Sound(os.path.join('sound', 'fallgame_ammo.mp3')).play()
             self.bullets += 1
             self.score += 1
-        if pg.sprite.spritecollideany(self, enemy_sprite):
-            pg.mixer.Sound(os.path.join('sound', 'fallgame_dead.wav')).play()
-            self.live = False
+        for enemy in enemy_sprite:
+            if pg.sprite.collide_mask(self, enemy):
+                pg.mixer.Sound(os.path.join('sound', 'fallgame_dead.wav')).play()
+                self.live = False
+                break
 
 
 class GunFall(pg.sprite.Sprite):
@@ -109,6 +112,7 @@ class EnemyFall(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        self.mask = pg.mask.from_surface(self.image)
 
     def update(self):
         # падение бутылок "Fantaser"а
