@@ -248,6 +248,7 @@ def main():
         clock.tick(50)
     player_sprite_race.empty()
     col_sprites.empty()
+    pg.display.quit()
     exit_scene()
 
 if __name__ == '__main__':
