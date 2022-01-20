@@ -15,16 +15,16 @@ class Col(pg.sprite.Sprite):
         self.rect.y -= 50
 
     def update(self):
-        if pg.sprite.spritecollideany(self, player_sprite): # столкновение
+        if pg.sprite.spritecollideany(self, player_sprite):  # столкновение
             race.end = True
-        elif self.rect.y >= race.height: # убираем лишнее
+        elif self.rect.y >= race.height:  # убираем лишнее
             self.kill()
-        else: # движение
+        else:  # движение
             self.rect.y += speed_col
             self.image = pg.transform.scale(self.image, (self.image.get_width() + 2, self.image.get_width() + 2))
 
 
-class Player(pg.sprite.Sprite): # игрок
+class Player(pg.sprite.Sprite):  # игрок
     image = pg.transform.scale(pg.image.load(os.path.join('data', 'car.png')), (110, 75))
 
     def __init__(self):
@@ -36,7 +36,7 @@ class Player(pg.sprite.Sprite): # игрок
         self.speed = 5
 
     def move(self, step):
-        if self.rect.x + step <= race.width - self.image.get_width() and self.rect.x + step >= 0:
+        if race.width - self.image.get_width() >= self.rect.x + step >= 0:
             self.rect.x += step
 
 
@@ -55,11 +55,12 @@ class Race:
         self.end = False
         self.score = 0
 
-    def render(self, screen): # отображение очков
+    def render(self, screen):  # отображение очков
         f = pg.font.Font(None, 36)
         text = f.render(f'{self.score}', True,
                         (0, 0, 255))
         screen.blit(text, (10, 10))
+
 
 def new_rec(score0):
     # Запись рекорда
@@ -71,6 +72,7 @@ def new_rec(score0):
         sql = f"""update record set rec = {score0} where Game like '%raceInWald%'"""
         cur.execute(sql)
     db.commit()
+
 
 def new_game():
     # перезапуск игры
@@ -131,7 +133,7 @@ def race_start():
                 if keys[pg.K_r]:
                     race.end = False
                     new_game()
-        if race.score % 100 == 0 and race.score != 0: # ускорение игры
+        if race.score % 100 == 0 and race.score != 0:  # ускорение игры
             race.speed_tree_new = race.speed_tree_new - 50
             speed_col = round(speed_col * 1.10)
             pg.time.set_timer(race.new_tree, race.speed_tree_new)
