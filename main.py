@@ -1,10 +1,11 @@
 import base64
+import sys
 
 from Saper import *
 from Gleid import *
 from Survival import *
 from FallGame import *
-from raceInWald import *
+from RaceUnderRubble import *
 
 
 def exit_scene():
@@ -36,7 +37,7 @@ class Menu:
                       'Saper_easy': 'Лёгкий Сапёр',
                       'Gleid': 'Gleid',
                       'spirte_fall': 'Spirte Fall',
-                      'raceInWald': 'Лесные гонки'}
+                      'raceInWald': 'Гонки под камнями'}
 
     def main_scene(self):
         # Главное меню
@@ -96,6 +97,7 @@ class Menu:
     def race_in_wald(self):
         race_start()
         self.fix_screen()
+        self.scene = 'play'
 
     def fix_screen(self):
         # возвращение размера окна в исходное состояние
@@ -216,6 +218,12 @@ def main():
     # Функция запуска приложения
     pg.mixer.pre_init(44100, -16, 4, 512)
     pg.init()
+    try:
+        import pyi_splash
+        pg.time.wait(1500)
+        pyi_splash.close()
+    except:
+        pass
     size = (800, 600)
     screen = pg.display.set_mode(size)
     icon = pg.image.load(os.path.join('data', 'icon.png'))
@@ -238,8 +246,9 @@ def main():
         menu.render(screen)
         pg.display.flip()
         clock.tick(50)
-
+    player_sprite_race.empty()
+    col_sprites.empty()
+    exit_scene()
 
 if __name__ == '__main__':
     main()
-    exit_scene()
