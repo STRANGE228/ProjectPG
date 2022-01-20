@@ -4,6 +4,7 @@ from Saper import *
 from Gleid import *
 from Survival import *
 from FallGame import *
+from raceInWald import *
 
 
 def exit_scene():
@@ -34,7 +35,8 @@ class Menu:
                       'Saper_medium': 'Средний Сапёр',
                       'Saper_easy': 'Лёгкий Сапёр',
                       'Gleid': 'Gleid',
-                      'spirte_fall': 'Spirte Fall'}
+                      'spirte_fall': 'Spirte Fall',
+                      'raceInWald': 'raceInWald'}
 
     def main_scene(self):
         # Главное меню
@@ -51,7 +53,8 @@ class Menu:
                         (300, 50, 'Minesweeper'),
                         (50, 200, 'Zombie Survival'),
                         (300, 200, 'Spirt Fall'),
-                        (550, 50, 'easter')]
+                        (550, 50, 'easter'),
+                        (550, 200, 'raceInWald')]
         self.buttons_size = (200, 100)
         self.scene = 'play'
 
@@ -88,6 +91,10 @@ class Menu:
     def fall_game(self):
         # начало игры Spirt Fall
         fall_start()
+        self.fix_screen()
+
+    def race_In_Wald(self):
+        race_start()
         self.fix_screen()
 
     def fix_screen(self):
@@ -185,6 +192,8 @@ class Menu:
                         if self.count_easter == 5:
                             self.easter_egg()
                             self.count_easter = 0
+                    elif 'raceInWald' in button[2]:
+                        self.race_In_Wald()
 
                 elif self.scene == 'begin_minesweeper':
                     x, y, bombs = 0, 0, 0
