@@ -11,7 +11,6 @@ from RaceUnderRubble import *
 def exit_scene():
     # Выход из pygame
     pg.quit()
-    exit(0)
 
 
 class Menu:
@@ -220,7 +219,7 @@ def main():
     pg.init()
     try:
         import pyi_splash
-        pg.time.wait(1500)
+        pg.time.wait(1000)
         pyi_splash.close()
     except:
         pass
@@ -249,7 +248,8 @@ def main():
     player_sprite_race.empty()
     col_sprites.empty()
     pg.display.quit()
-    exit_scene()
+    pg.quit()
+
 
 if __name__ == '__main__':
     main()
