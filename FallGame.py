@@ -1,6 +1,6 @@
 from imports import *
 
-player_sprite = pg.sprite.Group()
+player_sprite_race = pg.sprite.Group()
 enemy_sprite = pg.sprite.Group()
 bullet_sprite = pg.sprite.Group()
 spawn_bul = pg.sprite.Group()
@@ -22,7 +22,7 @@ class PlayerFall(pg.sprite.Sprite):
     image = pg.image.load(os.path.join('data', 'spirte2.png'))
 
     def __init__(self):
-        super().__init__(player_sprite)
+        super().__init__(player_sprite_race)
         self.image = PlayerFall.image
         self.rect = self.image.get_rect()
         self.rect.x = 100
@@ -67,7 +67,7 @@ class GunFall(pg.sprite.Sprite):
     image = pg.image.load(os.path.join('data', 'spirte1.png'))
 
     def __init__(self, player):
-        super().__init__(player_sprite)
+        super().__init__(player_sprite_race)
         self.image = GunFall.image
         self.rect = self.image.get_rect()
         self.rect.x = 100
@@ -145,7 +145,7 @@ def fall_start():
 
     def fallgame_clear():
         # отчистка групп спрайтов
-        player_sprite.empty()
+        player_sprite_race.empty()
         enemy_sprite.empty()
         bullet_sprite.empty()
         spawn_bul.empty()
@@ -176,7 +176,7 @@ def fall_start():
     def new_game():
         # перезапуск игры
         nonlocal player, gun
-        player_sprite.empty()
+        player_sprite_race.empty()
         enemy_sprite.empty()
         bullet_sprite.empty()
         spawn_bul.empty()
@@ -233,12 +233,12 @@ def fall_start():
         f = pg.font.Font(None, 260)
         text_score = f.render(f'{round(player.score, 2)}', True, (150, 150, 150))
         screen.blit(text_score, (380, 200))
-        player_sprite.draw(screen)
+        player_sprite_race.draw(screen)
         enemy_sprite.draw(screen)
         bullet_sprite.draw(screen)
         spawn_bul.draw(screen)
         if player.live:
-            player_sprite.update()
+            player_sprite_race.update()
             enemy_sprite.update()
             bullet_sprite.update()
         if coord and pg.mouse.get_focused():

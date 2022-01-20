@@ -1,7 +1,7 @@
 from imports import *
 
 # Группы спрайтов необходимые для игры
-player_sprite = pg.sprite.Group()
+player_sprite_race = pg.sprite.Group()
 sprites_1 = pg.sprite.Group()
 sprites_2 = pg.sprite.Group()
 ground_sprite = pg.sprite.Group()
@@ -13,7 +13,7 @@ class Player(pg.sprite.Sprite):
     image = pg.image.load(os.path.join('data', 'gleid_hero.png'))
 
     def __init__(self):
-        super().__init__(player_sprite)
+        super().__init__(player_sprite_race)
         self.image = Player.image
         self.rect = self.image.get_rect()
         self.rect.x = 120
@@ -190,7 +190,7 @@ def gleid_start():
 
     def gleid_clear():
         # отчистка групп спрайтов
-        player_sprite.empty()
+        player_sprite_race.empty()
         sprites_1.empty()
         sprites_2.empty()
         ground_sprite.empty()
@@ -200,7 +200,7 @@ def gleid_start():
     def new_game():
         # Перезапуск игры
         nonlocal player, t, count, check
-        player_sprite.empty()
+        player_sprite_race.empty()
         sprites_1.empty()
         sprites_2.empty()
         check_sprite.empty()
@@ -264,7 +264,7 @@ def gleid_start():
         count -= 5
 
         if player.live:
-            player_sprite.update()
+            player_sprite_race.update()
             sprites_1.update()
             sprites_2.update()
             ground_sprite.update()
@@ -279,7 +279,7 @@ def gleid_start():
                 check.kill()
                 zap_rec(player.score)
                 new_game()
-        player_sprite.draw(screen)
+        player_sprite_race.draw(screen)
         check_sprite.update()
         ground_sprite.draw(screen)
         sprites_1.draw(screen)

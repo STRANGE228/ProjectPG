@@ -27,7 +27,7 @@ class Menu:
         self.size = self.x, self.y
         self.first_menu = pg.image.load(os.path.join('data', 'first_main.jpg'))
         self.menu = pg.image.load(os.path.join('data', 'first_menu.jpg'))
-        self.record_menu = pg.image.load(os.path.join('data', 'records.jpg'))
+        self.record_menu = pg.image.load(os.path.join('data', 'records.png'))
         self.game_menu = pg.image.load(os.path.join('data', 'game_select.png'))
         self.select_minesweeper = pg.image.load(os.path.join('data', 'minesweeper_difficulty_select.png'))
         self.names = {'Zombie_Survival': 'Zombie Survival',
@@ -36,7 +36,7 @@ class Menu:
                       'Saper_easy': 'Лёгкий Сапёр',
                       'Gleid': 'Gleid',
                       'spirte_fall': 'Spirte Fall',
-                      'raceInWald': 'raceInWald'}
+                      'raceInWald': 'Лесные гонки'}
 
     def main_scene(self):
         # Главное меню
@@ -93,7 +93,7 @@ class Menu:
         fall_start()
         self.fix_screen()
 
-    def race_In_Wald(self):
+    def race_in_wald(self):
         race_start()
         self.fix_screen()
 
@@ -193,7 +193,7 @@ class Menu:
                             self.easter_egg()
                             self.count_easter = 0
                     elif 'raceInWald' in button[2]:
-                        self.race_In_Wald()
+                        self.race_in_wald()
 
                 elif self.scene == 'begin_minesweeper':
                     x, y, bombs = 0, 0, 0
@@ -238,8 +238,8 @@ def main():
         menu.render(screen)
         pg.display.flip()
         clock.tick(50)
-    pg.quit()
 
 
 if __name__ == '__main__':
     main()
+    exit_scene()
