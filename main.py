@@ -54,7 +54,7 @@ class Menu:
                         (50, 200, 'Zombie Survival'),
                         (300, 200, 'Spirt Fall'),
                         (550, 50, 'easter'),
-                        (550, 200, 'raceInWald')]
+                        (300, 350, 'raceInWald')]
         self.buttons_size = (200, 100)
         self.scene = 'play'
 
