@@ -307,6 +307,7 @@ def zombie_start():
     pg.display.set_caption('Мега Супер Пупер Выживание Против Зомби Насмерть 18+')
     zombie_prev = pg.image.load(os.path.join('prevs', 'survival_img.png'))
     shot_survival = pg.mixer.Sound(os.path.join('sound', 'survival_shot.mp3'))
+    music_survival = pg.mixer.Sound(os.path.join('sound', 'survival_music.mp3'))
 
     def clear_z():
         # отчистка групп спрайтов
@@ -339,7 +340,6 @@ def zombie_start():
         clear_z()
         return
 
-    music_survival = pg.mixer.Sound(os.path.join('sound', 'survival_music.mp3'))
     walls_pos, free_cell = create_map(x, y)
     for wall in walls_pos:
         Wall(*wall)
