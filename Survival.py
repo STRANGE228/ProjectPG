@@ -396,7 +396,7 @@ def zombie_start():
         if not player.live:
             if not rec_zap:
                 rec_zap = True
-                new_rec(score)
+                new_rec(score + len(death))
 
         if len(enemies) == 0:
             # переход на следуйщий уровень
