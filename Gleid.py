@@ -19,7 +19,7 @@ class Player(pg.sprite.Sprite):
         self.rect.x = 120
         self.rect.y = 500
         self.inJump = False
-        self.jump = 30
+        self.jump = 20
         self.onGround = False
         self.score = 0
         self.live = True
@@ -30,18 +30,18 @@ class Player(pg.sprite.Sprite):
             # проверка на столкновения или на приземление
             if pg.sprite.spritecollideany(self, ground_sprite) is None:
                 if not(pg.sprite.spritecollideany(self, sprites_1) or pg.sprite.spritecollideany(self, sprites_2)):
-                    self.rect.y += 4
+                    self.rect.y += (self.jump ** 0.5) * 2
                     if obstacle := (pg.sprite.spritecollideany(self, sprites_1) or
                                     pg.sprite.spritecollideany(self, sprites_2)):
                         if obstacle.typ != 1:
                             if self.live:
                                 self.live = False
                                 pg.mixer.Sound(os.path.join('sound', 'gleid_dead.mp3')).play(maxtime=800)
-                        self.rect.y -= 4
+                        self.rect.y -= (self.jump ** 0.5) * 2
                         self.rect.y = obstacle.rect.y - 30
                         self.onGround = True
                     elif ground := pg.sprite.spritecollideany(self, ground_sprite):
-                        self.rect.y -= 4
+                        self.rect.y -= (self.jump ** 0.5) * 2
                         self.rect.y = ground.rect.y - 30
                         self.onGround = True
                     else:
@@ -54,21 +54,21 @@ class Player(pg.sprite.Sprite):
             self.onGround = False
             if self.jump > -2:
                 if self.jump > 0:
-                    self.rect.y -= 4
+                    self.rect.y -= (self.jump ** 0.5) * 2
                     if obstacle := (pg.sprite.spritecollideany(self, sprites_1) or
                                     pg.sprite.spritecollideany(self, sprites_2)):
                         if obstacle.typ != 1:
                             if self.live:
                                 self.live = False
                                 pg.mixer.Sound(os.path.join('sound', 'gleid_dead.mp3')).play(maxtime=800)
-                        self.rect.y += 4
+                        self.rect.y += (self.jump ** 0.5) * 2
                         self.rect.y = obstacle.rect.y + 30
                         self.jump = 0
 
                 self.jump -= 1
             else:
                 self.inJump = False
-                self.jump = 30
+                self.jump = 20
         if pg.sprite.spritecollideany(self, ground_sprite):
             self.onGround = True
 
@@ -91,7 +91,7 @@ class Ground(pg.sprite.Sprite):
 
     def update(self):
         # перемеение земли влево для имитации движения
-        self.rect.x -= 5
+        self.rect.x -= 6
         if self.rect.x <= -800:
             self.rect.x = 0
 
@@ -126,7 +126,7 @@ class Obstacle(pg.sprite.Sprite):
 
     def update(self):
         # перемеение препятствий влево для имитации движения
-        self.rect.x -= 5
+        self.rect.x -= 6
         if self.rect.x < -30:
             self.kill()
 
@@ -261,7 +261,7 @@ def gleid_start():
         if count <= 0:
             create_obstacle()
             count = 800
-        count -= 5
+        count -= 6
 
         if player.live:
             player_sprite_race.update()

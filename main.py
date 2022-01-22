@@ -36,7 +36,7 @@ class Menu:
                       'Saper_easy': 'Лёгкий Сапёр',
                       'Gleid': 'Gleid',
                       'spirte_fall': 'Spirte Fall',
-                      'raceInWald': 'Гонки под камнями'}
+                      'raceInWald': 'Опасная поездка'}
 
     def main_scene(self):
         # Главное меню
@@ -217,18 +217,13 @@ def main():
     # Функция запуска приложения
     pg.mixer.pre_init(44100, -16, 4, 512)
     pg.init()
-    try:
-        import pyi_splash
-        pg.time.wait(1000)
-        pyi_splash.close()
-    except:
-        pass
-    size = (800, 600)
-    screen = pg.display.set_mode(size)
+
+    size_menu = (800, 600)
+    screen = pg.display.set_mode(size_menu)
     icon = pg.image.load(os.path.join('data', 'icon.png'))
     pg.display.set_icon(icon)
     menu = Menu(screen)
-    clock = pg.time.Clock()
+    clock_menu = pg.time.Clock()
     pg.display.set_caption('Меню')
     click = pg.mixer.Sound(os.path.join('sound', 'click.mp3'))
 
@@ -244,7 +239,7 @@ def main():
 
         menu.render(screen)
         pg.display.flip()
-        clock.tick(50)
+        clock_menu.tick(50)
     player_sprite_race.empty()
     col_sprites.empty()
     pg.display.quit()
