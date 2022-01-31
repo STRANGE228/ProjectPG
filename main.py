@@ -31,7 +31,7 @@ class Menu:
         self.game_menu = pg.image.load(os.path.join('data', 'game_select.png'))
         self.select_minesweeper = pg.image.load(os.path.join('data', 'minesweeper_difficulty_select.png'))
         self.names = {'Zombie_Survival': 'Zombie Survival',
-                      'Saper_hard': 'Сложный Сапёр',
+                      'Super_hard': 'Сложный Сапёр',
                       'Saper_medium': 'Средний Сапёр',
                       'Saper_easy': 'Лёгкий Сапёр',
                       'Gleid': 'Gleid',
@@ -132,7 +132,7 @@ class Menu:
 
     def easter_egg(self):
         # секретная пасхалка для команды 1 школы
-        file_name_txt = os.path.join('data', 'bs_s.txt')
+        file_name_txt = os.path.join('data', 'img_s.txt')
         # расшифровка изображения из текстового файла
         with open(file_name_txt, 'rb') as f:
             img_data = base64.b64decode(f.read())
@@ -147,8 +147,7 @@ class Menu:
         # музыка для картинки
         music = pg.mixer.Sound(os.path.join('sound', 'easter_music.mp3'))
         # ...
-        pg.display.set_caption('Толпы кричат nkeeei воу-воу о боже и у меня есть грешки'
-                               ' но на swag благословлён Богом (ПАСХАЛКА!)')
+        pg.display.set_caption('В перерывах между кодингом')
         pg.display.flip()
         music.play(-1)
         easter = True
