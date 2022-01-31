@@ -31,7 +31,7 @@ class Menu:
         self.game_menu = pg.image.load(os.path.join('data', 'game_select.png'))
         self.select_minesweeper = pg.image.load(os.path.join('data', 'minesweeper_difficulty_select.png'))
         self.names = {'Zombie_Survival': 'Zombie Survival',
-                      'Super_hard': 'Сложный Сапёр',
+                      'Saper_hard': 'Сложный Сапёр',
                       'Saper_medium': 'Средний Сапёр',
                       'Saper_easy': 'Лёгкий Сапёр',
                       'Gleid': 'Gleid',
@@ -216,6 +216,13 @@ def main():
     # Функция запуска приложения
     pg.mixer.pre_init(44100, -16, 4, 512)
     pg.init()
+
+    try:
+        import pyi_splash
+        pg.time.wait(1000)
+        pyi_splash.close()
+    except:
+        pass
 
     size_menu = (800, 600)
     screen = pg.display.set_mode(size_menu)
